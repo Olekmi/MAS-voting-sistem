@@ -70,20 +70,46 @@ def translate_index_dictionary(preference_matrix,outcome_dictionary):
     return indexes
     
     
-    
+def total_distance_players(happiness_score):
+    total_sum = np.sum(happiness_score,axis=0)
+    return np.reshape(total_sum,(total_sum.shape[0],1))  
+
+
   
+    
+def happiness_player(total_distance_players):
+    happiness_player = 1/(1+np.abs(total_distance_players))
+    return happiness_player
+    
     
     
 preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
 print(preference_matrix)
 outcome = calculate_outcome(preference_matrix)
 print(outcome)
-#happiness_score(calculate_outcome(preference_matrix),preference_matrix)
+
 
 test= np.array([[1,2,3],
                 [4,5,6]])
-#print(test.shape)
-#print(translate_index_matrix(preference_matrix))
+    
+test2 = np.array([[4,1,5]])
+
+
+
+
 indexes_matrix = translate_index_matrix(preference_matrix)
 indexes_dict = translate_index_dictionary(preference_matrix,outcome)
-happiness_score(indexes_dict,indexes_matrix) 
+happiness_score = happiness_score(indexes_dict,indexes_matrix) 
+
+total_distance_player = total_distance_players(happiness_score)
+print(total_distance_player)
+
+total_happiness_player = happiness_player(total_distance_player)
+print(total_happiness_player)
+
+#Todo : implement strategic voting
+#Burying, Compromising, Push over, Bullet voting
+
+    
+
+    
