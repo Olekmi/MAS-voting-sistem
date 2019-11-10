@@ -34,23 +34,56 @@ def calculate_outcome(preference_matrix):
             else:
                 outcome[key] = dict_uniques[key]
     outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))      
-    print(outcome)
     return outcome
 
-def happiness_score(outcome,preference_matrix):
+def happiness_score(outcome_indexes,index_preference_matrix):
+    #we subtract the # of rows of preference matrix from  the current index of 
+    #the preference of the player to get the highest index as the 1st one 
+    distances = np.ones((outcome_indexes.shape[0],outcome_indexes.shape[1]), dtype=np.int32)
     
+    for i in range(outcome_indexes.shape[1]):#col by col      
+        for j in range(outcome_indexes.shape[0]):
+            distances[j][i] = outcome_indexes[j][i] - index_preference_matrix[j]
+
+#    print("distances\n",distances)
+    happiness_score = distances * index_preference_matrix
+#    print("happiness\n",happiness_score)
+    return happiness_score
+
+            
+def translate_index_matrix(matrix):
+    indexes = []
+    for i in range(matrix.shape[1]):
+        for j in range(matrix.shape[0]):
+            if (i == matrix.shape[1] - 1):
+                indexes.append(matrix.shape[0] - j)
+    indexes_numpy = np.asarray(indexes,dtype=np.int32)
+    indexes_numpy = np.reshape(indexes_numpy,(matrix.shape[0],1))
+    return indexes_numpy
+            
+
+def translate_index_dictionary(preference_matrix,outcome_dictionary):
+    indexes= np.ones((preference_matrix.shape[0],preference_matrix.shape[1]), dtype=np.int32)
     for i in range(preference_matrix.shape[1]):
-        distance = []
         for j in range(preference_matrix.shape[0]):
-            distance.append(preference_matrix.shape[1]-list(outcome.keys()).index(preference_matrix[j][i]) - preference_matrix.shape[1]-i) #rank of the outcome - 
-            rank_outcome = list(outcome.keys()).index(preference_matrix[j][i])
-            prefer_rank = preference_matrix.shape[1]
-        
-        print(distance)
-            # weights = 
+            indexes[j][i] = len(outcome_dictionary) - list(outcome_dictionary.keys()).index(preference_matrix[j][i])
+    return indexes
+    
+    
+    
+  
+    
     
 preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
 print(preference_matrix)
-calculate_outcome(preference_matrix)
-happiness_score(calculate_outcome(preference_matrix),preference_matrix)
+outcome = calculate_outcome(preference_matrix)
+print(outcome)
+#happiness_score(calculate_outcome(preference_matrix),preference_matrix)
 
+test= np.array([[1,2,3],
+                [4,5,6]])
+#print(test.shape)
+#print(translate_index_matrix(preference_matrix))
+indexes_matrix = translate_index_matrix(preference_matrix)
+indexes_dict = translate_index_dictionary(preference_matrix,outcome)
+happiness_score(indexes_dict,indexes_matrix) 
