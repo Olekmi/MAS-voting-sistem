@@ -1,2 +1,2 @@
 # MAS-voting-sistem
-assignment 1
+assignment 1.
