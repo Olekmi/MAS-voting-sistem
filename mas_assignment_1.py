@@ -3,8 +3,9 @@ import operator
 import collections
 import random
 
-number_of_preferences = 3
-number_of_voters = 4
+number_of_preferences = 5
+number_of_voters = 8
+voter = 8
 
 def gen_random_preference_matrix(number_of_preferences,number_of_voters):
     preference_matrix = random.sample(range(number_of_preferences),number_of_preferences)
@@ -99,9 +100,9 @@ test2 = np.array([[4,1,5]])
 
 indexes_matrix = translate_index_matrix(preference_matrix)
 indexes_dict = translate_index_dictionary(preference_matrix,outcome)
-happiness_score = happiness_score(indexes_dict,indexes_matrix) 
+happiness_scores = happiness_score(indexes_dict,indexes_matrix) 
 
-total_distance_player = total_distance_players(happiness_score)
+total_distance_player = total_distance_players(happiness_scores)
 print(total_distance_player)
 
 total_happiness_player = happiness_player(total_distance_player)
@@ -109,7 +110,42 @@ print(total_happiness_player)
 
 #Todo : implement strategic voting
 #Burying, Compromising, Push over, Bullet voting
+def Compromising(happiness_scoress,preference_matrix,voter):
+    counter = 0
+    vector_happiness = []
+    new_happiness_score = []
+    preference_matrix_A_acc = []
+    if total_happiness_player[voter-1] != 1:#because the index starts frm 0
+        print("We will improve your happiness.") 
+        for j in range(preference_matrix.shape[0]):
+            if j>0: #we do not change the top preference, only an alternative
+                for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
+                    counter += 1
+                    g = preference_matrix.shape[0] - g-1#inversing index
+                    # print("g",g)
+                    preference_matrix_A = preference_matrix
+                    alternative_A = preference_matrix_A[j][voter-1]
+                    preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
+                    preference_matrix_A[g][voter-1] = alternative_A
+                    outcome_A = calculate_outcome(preference_matrix_A)
+                    indexes_matrix_A = translate_index_matrix(preference_matrix_A)
+                    indexes_dict_A = translate_index_dictionary(preference_matrix_A,outcome_A)
+                    happiness_score_A = happiness_score(indexes_dict_A,indexes_matrix_A) 
+                    total_distance_player_A = total_distance_players(happiness_score_A)
+                    new_happiness_score = happiness_player(total_distance_player_A)
+                    vector_happiness.append(new_happiness_score[voter-1])
+                    preference_matrix_A_acc.append(preference_matrix_A)
+        max_h = max(vector_happiness)  
+        index_max = vector_happiness.index(max_h)
+    else:
+        print("We do not need to improve your happiness.") 
+        index_max = 0
+        preference_matrix_A_acc = [[1]]
+    print("vector_happ after compromising voting",vector_happiness[index_max])
+    return preference_matrix_A_acc[index_max]
 
+strategy_Compromising = Compromising(total_happiness_player,preference_matrix,voter)
+print(strategy_Compromising)
     
 
     
