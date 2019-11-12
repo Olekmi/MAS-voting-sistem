@@ -116,7 +116,7 @@ def Compromising(happiness_scoress,preference_matrix,voter):
     new_happiness_score = []
     preference_matrix_A_acc = []
     if total_happiness_player[voter-1] != 1:#because the index starts frm 0
-        print("We will improve your happiness.") 
+        print("We will try to improve your happiness.") 
         for j in range(preference_matrix.shape[0]):
             if j>0: #we do not change the top preference, only an alternative
                 for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
@@ -137,10 +137,12 @@ def Compromising(happiness_scoress,preference_matrix,voter):
                     preference_matrix_A_acc.append(preference_matrix_A)
         max_h = max(vector_happiness)  
         index_max = vector_happiness.index(max_h)
+        if max_h <= total_happiness_player[voter-1]:
+            return print("We cannot improve your happiness.") 
     else:
-        print("We do not need to improve your happiness.") 
-        index_max = 0
-        preference_matrix_A_acc = [[1]]
+        return print("We do not need to improve your happiness.") 
+    #     index_max = 0
+    #     preference_matrix_A_acc = [[1]]
     print("vector_happ after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max]
 
