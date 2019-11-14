@@ -34,62 +34,79 @@ def calculate_outcome(preference_matrix):
                 outcome[key] += dict_uniques[key]
             else:
                 outcome[key] = dict_uniques[key]
-    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))     
-    #in case of bullet voting 
-    try:
-        del outcome[-1] 
-    except KeyError:
-        False
-
+    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))      
     return outcome
 
+def happiness_score(outcome_indexes,index_preference_matrix):
+    #we subtract the # of rows of preference matrix from  the current index of 
+    #the preference of the player to get the highest index as the 1st one 
+    distances = np.ones((outcome_indexes.shape[0],outcome_indexes.shape[1]), dtype=np.int32)
+    
+    for i in range(outcome_indexes.shape[1]):#col by col      
+        for j in range(outcome_indexes.shape[0]):
+            distances[j][i] = outcome_indexes[j][i] - index_preference_matrix[j]
+
+#    print("distances\n",distances)
+    happiness_score = distances * index_preference_matrix
+#    print("happiness\n",happiness_score)
+    return happiness_score
+
+            
+def translate_index_matrix(matrix):
+    indexes = []
+    for i in range(matrix.shape[1]):
+        for j in range(matrix.shape[0]):
+            if (i == matrix.shape[1] - 1):
+                indexes.append(matrix.shape[0] - j)
+    indexes_numpy = np.asarray(indexes,dtype=np.int32)
+    indexes_numpy = np.reshape(indexes_numpy,(matrix.shape[0],1))
+    return indexes_numpy
+            
+
+def translate_index_dictionary(preference_matrix,outcome_dictionary):
+    indexes= np.ones((preference_matrix.shape[0],preference_matrix.shape[1]), dtype=np.int32)
+    for i in range(preference_matrix.shape[1]):
+        for j in range(preference_matrix.shape[0]):
+            indexes[j][i] = len(outcome_dictionary) - list(outcome_dictionary.keys()).index(preference_matrix[j][i])
+    return indexes
+    
+    
+def total_distance_players(happiness_score):
+    total_sum = np.sum(happiness_score,axis=0)
+    return np.reshape(total_sum,(total_sum.shape[0],1))  
+
+
+  
     
 def happiness_player(total_distance_players):
     happiness_player = 1/(1+np.abs(total_distance_players))
     return happiness_player
     
-def calculate_happiness(preference_matrix, outcome):
-    outcome = np.array([*outcome]) #list out of the dict keys
-    prefs_size =preference_matrix.shape[0]
-    distance_vector = []
-    for prefs in preference_matrix.T:
-
-        total_distance = 0
-        for pos, pref in enumerate(prefs):
-            k = prefs_size - np.where(outcome == pref)[0][0]
-            w = prefs_size - pos 
-            total_distance += (k - w) * w
-
-        distance_vector.append(total_distance)
-
-    happiness_vector = happiness_player(distance_vector)
-    return happiness_vector
-
-def bullet_voting(preference_matrix, voter):
-    bullet_pref_matrix = np.copy(preference_matrix)
-    bullet_pref_matrix[1:, voter] = -1
-    return bullet_pref_matrix
-
-
-
-##-------------------------MAIN------------------------------------
-
+    
+    
 preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
-# preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
 print(preference_matrix)
-
-#HAPPINESS WITH HONEST VOTING
 outcome = calculate_outcome(preference_matrix)
 print(outcome)
-print("HAPPINESS:\n", np.vstack(calculate_happiness(preference_matrix, outcome)), "\n\n")
-
-#HAPPINESS WITH BULLET VOTING
-bullet_matrix = bullet_voting(preference_matrix, 0)
-bullet_outcome = calculate_outcome(bullet_matrix)
-print(bullet_outcome)
-print("HAPPINESS BULLET:\n", np.vstack(calculate_happiness(preference_matrix, bullet_outcome)), "\n\n")
 
 
+test= np.array([[1,2,3],
+                [4,5,6]])
+    
+test2 = np.array([[4,1,5]])
+
+
+
+
+indexes_matrix = translate_index_matrix(preference_matrix)
+indexes_dict = translate_index_dictionary(preference_matrix,outcome)
+happiness_scores = happiness_score(indexes_dict,indexes_matrix) 
+
+total_distance_player = total_distance_players(happiness_scores)
+print(total_distance_player)
+
+total_happiness_player = happiness_player(total_distance_player)
+print(total_happiness_player)
 
 #Todo : implement strategic voting
 #Burying, Compromising, Push over, Bullet voting
@@ -126,11 +143,11 @@ def Compromising(happiness_scoress,preference_matrix,voter):
         return print("We do not need to improve your happiness.") 
     #     index_max = 0
     #     preference_matrix_A_acc = [[1]]
-    print("vector_happiness after compromising voting",vector_happiness[index_max])
+    print("vector_happ after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max]
 
-# strategy_Compromising = Compromising(total_happiness_player,preference_matrix,voter)
-# print(strategy_Compromising)
+strategy_Compromising = Compromising(total_happiness_player,preference_matrix,voter)
+print(strategy_Compromising)
     
 
     
