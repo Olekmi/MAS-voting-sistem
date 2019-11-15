@@ -56,6 +56,7 @@ def calculate_happiness(preference_matrix, outcome):
 
         total_distance = 0
         for pos, pref in enumerate(prefs):
+            if pref == -1: break # for bullet voting
             k = prefs_size - np.where(outcome == pref)[0][0]
             w = prefs_size - pos 
             total_distance += (k - w) * w
@@ -81,24 +82,26 @@ print(preference_matrix)
 #HAPPINESS WITH HONEST VOTING
 outcome = calculate_outcome(preference_matrix)
 print(outcome)
-print("HAPPINESS:\n", np.vstack(calculate_happiness(preference_matrix, outcome)), "\n\n")
+happiness_vector = calculate_happiness(preference_matrix, outcome)
+print("HAPPINESS:\n", np.vstack(happiness_vector), "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
 bullet_matrix = bullet_voting(preference_matrix, 0)
 bullet_outcome = calculate_outcome(bullet_matrix)
 print(bullet_outcome)
-print("HAPPINESS BULLET:\n", np.vstack(calculate_happiness(preference_matrix, bullet_outcome)), "\n\n")
+happiness_vector_bullet = calculate_happiness(preference_matrix, bullet_outcome)
+print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet), "\n\n")
 
 
 
 #Todo : implement strategic voting
 #Burying, Compromising, Push over, Bullet voting
-def Compromising(happiness_scoress,preference_matrix,voter):
+def Compromising(happiness_scores, preference_matrix, voter):
     counter = 0
     vector_happiness = []
     new_happiness_score = []
     preference_matrix_A_acc = []
-    if total_happiness_player[voter-1] != 1:#because the index starts frm 0
+    if happiness_scores[voter-1] != 1:#because the index starts frm 0
         print("We will try to improve your happiness.") 
         for j in range(preference_matrix.shape[0]):
             if j>0: #we do not change the top preference, only an alternative
@@ -111,16 +114,13 @@ def Compromising(happiness_scoress,preference_matrix,voter):
                     preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
                     preference_matrix_A[g][voter-1] = alternative_A
                     outcome_A = calculate_outcome(preference_matrix_A)
-                    indexes_matrix_A = translate_index_matrix(preference_matrix_A)
-                    indexes_dict_A = translate_index_dictionary(preference_matrix_A,outcome_A)
-                    happiness_score_A = happiness_score(indexes_dict_A,indexes_matrix_A) 
-                    total_distance_player_A = total_distance_players(happiness_score_A)
-                    new_happiness_score = happiness_player(total_distance_player_A)
+
+                    new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
                     vector_happiness.append(new_happiness_score[voter-1])
                     preference_matrix_A_acc.append(preference_matrix_A)
         max_h = max(vector_happiness)  
         index_max = vector_happiness.index(max_h)
-        if max_h <= total_happiness_player[voter-1]:
+        if max_h <= happiness_scores[voter-1]:
             return print("We cannot improve your happiness.") 
     else:
         return print("We do not need to improve your happiness.") 
@@ -129,8 +129,8 @@ def Compromising(happiness_scoress,preference_matrix,voter):
     print("vector_happiness after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max]
 
-# strategy_Compromising = Compromising(total_happiness_player,preference_matrix,voter)
-# print(strategy_Compromising)
+strategy_Compromising = Compromising(happiness_vector, preference_matrix, voter)
+print(strategy_Compromising)
     
 
     
