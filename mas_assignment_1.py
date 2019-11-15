@@ -2,6 +2,7 @@ import numpy as np
 import operator
 import collections
 import random
+import util
 
 number_of_preferences = 5
 number_of_voters = 8
@@ -17,7 +18,7 @@ def generate_fixed_pref_matrix(number_of_preferences,number_of_voters):
     preference_matrix = np.arange(number_of_preferences)
     preference_matrix = np.repeat([preference_matrix],number_of_voters,axis=0)
     return preference_matrix.T
-    
+
 def calculate_outcome(preference_matrix):
     outcome = {}
     for j in range(preference_matrix.shape[0]):
@@ -26,7 +27,7 @@ def calculate_outcome(preference_matrix):
             temp.append(preference_matrix[j][i])
         unique, counts = np.unique(temp, return_counts=True)
         dict_uniques = dict(zip(unique, counts))
-        
+
         for key in dict_uniques:
             dict_uniques[key] *=  (preference_matrix.shape[0] - 1 - j)
         for key in dict_uniques:
@@ -34,20 +35,20 @@ def calculate_outcome(preference_matrix):
                 outcome[key] += dict_uniques[key]
             else:
                 outcome[key] = dict_uniques[key]
-    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))     
-    #in case of bullet voting 
+    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
+    #in case of bullet voting
     try:
-        del outcome[-1] 
+        del outcome[-1]
     except KeyError:
         False
 
     return outcome
 
-    
+
 def happiness_player(total_distance_players):
     happiness_player = 1/(1+np.abs(total_distance_players))
     return happiness_player
-    
+
 def calculate_happiness(preference_matrix, outcome):
     outcome = np.array([*outcome]) #list out of the dict keys
     prefs_size =preference_matrix.shape[0]
@@ -58,7 +59,7 @@ def calculate_happiness(preference_matrix, outcome):
         for pos, pref in enumerate(prefs):
             if pref == -1: break # for bullet voting
             k = prefs_size - np.where(outcome == pref)[0][0]
-            w = prefs_size - pos 
+            w = prefs_size - pos
             total_distance += (k - w) * w
 
         distance_vector.append(total_distance)
@@ -102,7 +103,7 @@ def Compromising(happiness_scores, preference_matrix, voter):
     new_happiness_score = []
     preference_matrix_A_acc = []
     if happiness_scores[voter-1] != 1:#because the index starts frm 0
-        print("We will try to improve your happiness.") 
+        print("We will try to improve your happiness.")
         for j in range(preference_matrix.shape[0]):
             if j>0: #we do not change the top preference, only an alternative
                 for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
@@ -118,12 +119,12 @@ def Compromising(happiness_scores, preference_matrix, voter):
                     new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
                     vector_happiness.append(new_happiness_score[voter-1])
                     preference_matrix_A_acc.append(preference_matrix_A)
-        max_h = max(vector_happiness)  
+        max_h = max(vector_happiness)
         index_max = vector_happiness.index(max_h)
         if max_h <= happiness_scores[voter-1]:
-            return print("We cannot improve your happiness.") 
+            return print("We cannot improve your happiness.")
     else:
-        return print("We do not need to improve your happiness.") 
+        return print("We do not need to improve your happiness.")
     #     index_max = 0
     #     preference_matrix_A_acc = [[1]]
     print("vector_happiness after compromising voting",vector_happiness[index_max])
@@ -131,6 +132,3 @@ def Compromising(happiness_scores, preference_matrix, voter):
 
 strategy_Compromising = Compromising(happiness_vector, preference_matrix, voter)
 print(strategy_Compromising)
-    
-
-    
