@@ -2,6 +2,7 @@ import numpy as np
 import operator
 import collections
 import random
+import util
 
 number_of_preferences = 5
 number_of_voters = 8
@@ -81,7 +82,8 @@ print(preference_matrix)
 #HAPPINESS WITH HONEST VOTING
 outcome = calculate_outcome(preference_matrix)
 print(outcome)
-print("HAPPINESS:\n", np.vstack(calculate_happiness(preference_matrix, outcome)), "\n\n")
+happiness = np.vstack(calculate_happiness(preference_matrix, outcome))
+print("HAPPINESS:\n", happiness, "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
 bullet_matrix = bullet_voting(preference_matrix, 0)
@@ -93,6 +95,10 @@ print("HAPPINESS BULLET:\n", np.vstack(calculate_happiness(preference_matrix, bu
 
 #Todo : implement strategic voting
 #Burying, Compromising, Push over, Bullet voting
+
+happiness_scores = happiness_score(indexes_dict,indexes_matrix) 
+total_distance_player = total_distance_players(happiness_scores)
+total_happiness_player = happiness_player(total_distance_player)
 def Compromising(happiness_scoress,preference_matrix,voter):
     counter = 0
     vector_happiness = []
@@ -111,10 +117,10 @@ def Compromising(happiness_scoress,preference_matrix,voter):
                     preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
                     preference_matrix_A[g][voter-1] = alternative_A
                     outcome_A = calculate_outcome(preference_matrix_A)
-                    indexes_matrix_A = translate_index_matrix(preference_matrix_A)
-                    indexes_dict_A = translate_index_dictionary(preference_matrix_A,outcome_A)
-                    happiness_score_A = happiness_score(indexes_dict_A,indexes_matrix_A) 
-                    total_distance_player_A = total_distance_players(happiness_score_A)
+                    indexes_matrix_A = util.translate_index_matrix(preference_matrix_A)
+                    indexes_dict_A = util.translate_index_dictionary(preference_matrix_A,outcome_A)
+                    happiness_score_A = util.happiness_score(indexes_dict_A,indexes_matrix_A) 
+                    total_distance_player_A = util.total_distance_players(happiness_score_A)
                     new_happiness_score = happiness_player(total_distance_player_A)
                     vector_happiness.append(new_happiness_score[voter-1])
                     preference_matrix_A_acc.append(preference_matrix_A)
