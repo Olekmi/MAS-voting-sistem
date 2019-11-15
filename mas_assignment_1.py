@@ -58,9 +58,9 @@ def calculate_happiness(preference_matrix, outcome):
         total_distance = 0
         for pos, pref in enumerate(prefs):
             if pref == -1: break # for bullet voting
-            k = prefs_size - np.where(outcome == pref)[0][0]
-            w = prefs_size - pos
-            total_distance += (k - w) * w
+            k = prefs_size - np.where(outcome == pref)[0][0] #current position (in the voting outcome) 
+            w = prefs_size - pos # “desired” position (in the voter’s true preference list)
+            total_distance += (k - w) * w #weighted distance
 
         distance_vector.append(total_distance)
 
