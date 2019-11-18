@@ -30,7 +30,7 @@ def borda_calculate_outcome(preference_matrix):
             temp.append(preference_matrix[j][i])
         unique, counts = np.unique(temp, return_counts=True)
         dict_uniques = dict(zip(unique, counts))
-        print("dict",dict_uniques)
+        # print("dict",dict_uniques)
 
         for key in dict_uniques:
             dict_uniques[key] *=  (preference_matrix.shape[0] - 1 - j)
@@ -60,7 +60,7 @@ def plurality_calculate_outcome(preference_matrix):
         unique, counts = np.unique(temp, return_counts=True)
         dict_uniques = dict(zip(unique, counts))
         for key in dict_uniques:
-            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)
+            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)#we give weights only to top preference
         for key in dict_uniques:
             if key in outcome:
                 outcome[key] += dict_uniques[key]
@@ -72,7 +72,32 @@ def plurality_calculate_outcome(preference_matrix):
         del outcome[-1]
     except KeyError:
         False
+    return outcome
 
+def voting_for_two_calculate_outcome(preference_matrix):
+    outcome = {}
+    k = 0
+    for j in range(preference_matrix.shape[0]):
+        if j > 1:
+            k = 1
+        temp = []
+        for i in range(preference_matrix.shape[1]):
+            temp.append(preference_matrix[j][i])
+        unique, counts = np.unique(temp, return_counts=True)
+        dict_uniques = dict(zip(unique, counts))
+        for key in dict_uniques:
+            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)#we give weights only to 2 top preferences
+        for key in dict_uniques:
+            if key in outcome:
+                outcome[key] += dict_uniques[key]
+            else:
+                outcome[key] = dict_uniques[key]
+    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
+    #in case of bullet voting
+    try:
+        del outcome[-1]
+    except KeyError:
+        False
     return outcome
 
 def happiness_player(total_distance_players):
@@ -111,7 +136,7 @@ preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of
 print(preference_matrix)
 
 #HAPPINESS WITH HONEST VOTING
-outcome = plurality_calculate_outcome(preference_matrix)
+outcome = voting_for_two_calculate_outcome(preference_matrix)
 print(outcome)
 happiness_vector = calculate_happiness(preference_matrix, outcome)
 print("HAPPINESS:\n", np.vstack(happiness_vector), "\n\n")
@@ -139,7 +164,7 @@ def Compromising(happiness_scores, preference_matrix, voter):
                     alternative_A = preference_matrix_A[j][voter-1]
                     preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
                     preference_matrix_A[g][voter-1] = alternative_A
-                    outcome_A = borda_calculate_outcome(preference_matrix_A)
+                    outcome_A = voting_for_two_calculate_outcome(preference_matrix_A)
 
                     new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
                     vector_happiness.append(new_happiness_score[voter-1])
