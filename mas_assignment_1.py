@@ -4,6 +4,9 @@ import collections
 import random
 import util
 
+# import sys
+# sys.stdout = open('stdout.txt', 'w') #to save in an external file
+
 number_of_preferences = 5
 number_of_voters = 8
 voter = 8
@@ -19,7 +22,7 @@ def generate_fixed_pref_matrix(number_of_preferences,number_of_voters):
     preference_matrix = np.repeat([preference_matrix],number_of_voters,axis=0)
     return preference_matrix.T
 
-def calculate_outcome(preference_matrix):
+def borda_calculate_outcome(preference_matrix):
     outcome = {}
     for j in range(preference_matrix.shape[0]):
         temp = []
@@ -27,6 +30,7 @@ def calculate_outcome(preference_matrix):
             temp.append(preference_matrix[j][i])
         unique, counts = np.unique(temp, return_counts=True)
         dict_uniques = dict(zip(unique, counts))
+        print("dict",dict_uniques)
 
         for key in dict_uniques:
             dict_uniques[key] *=  (preference_matrix.shape[0] - 1 - j)
@@ -44,6 +48,32 @@ def calculate_outcome(preference_matrix):
 
     return outcome
 
+def plurality_calculate_outcome(preference_matrix):
+    outcome = {}
+    k = 0
+    for j in range(preference_matrix.shape[0]):
+        if j > 0:
+            k = 1
+        temp = []
+        for i in range(preference_matrix.shape[1]):
+            temp.append(preference_matrix[j][i])
+        unique, counts = np.unique(temp, return_counts=True)
+        dict_uniques = dict(zip(unique, counts))
+        for key in dict_uniques:
+            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)
+        for key in dict_uniques:
+            if key in outcome:
+                outcome[key] += dict_uniques[key]
+            else:
+                outcome[key] = dict_uniques[key]
+    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
+    #in case of bullet voting
+    try:
+        del outcome[-1]
+    except KeyError:
+        False
+
+    return outcome
 
 def happiness_player(total_distance_players):
     happiness_player = 1/(1+np.abs(total_distance_players))
@@ -81,22 +111,18 @@ preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of
 print(preference_matrix)
 
 #HAPPINESS WITH HONEST VOTING
-outcome = calculate_outcome(preference_matrix)
+outcome = plurality_calculate_outcome(preference_matrix)
 print(outcome)
 happiness_vector = calculate_happiness(preference_matrix, outcome)
 print("HAPPINESS:\n", np.vstack(happiness_vector), "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
 bullet_matrix = bullet_voting(preference_matrix, 0)
-bullet_outcome = calculate_outcome(bullet_matrix)
+bullet_outcome = borda_calculate_outcome(bullet_matrix)
 print(bullet_outcome)
 happiness_vector_bullet = calculate_happiness(preference_matrix, bullet_outcome)
 print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet), "\n\n")
 
-
-
-#Todo : implement strategic voting
-#Burying, Compromising, Push over, Bullet voting
 def Compromising(happiness_scores, preference_matrix, voter):
     counter = 0
     vector_happiness = []
@@ -109,12 +135,11 @@ def Compromising(happiness_scores, preference_matrix, voter):
                 for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
                     counter += 1
                     g = preference_matrix.shape[0] - g-1#inversing index
-                    # print("g",g)
                     preference_matrix_A = preference_matrix
                     alternative_A = preference_matrix_A[j][voter-1]
                     preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
                     preference_matrix_A[g][voter-1] = alternative_A
-                    outcome_A = calculate_outcome(preference_matrix_A)
+                    outcome_A = borda_calculate_outcome(preference_matrix_A)
 
                     new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
                     vector_happiness.append(new_happiness_score[voter-1])
@@ -125,8 +150,6 @@ def Compromising(happiness_scores, preference_matrix, voter):
             return print("We cannot improve your happiness.")
     else:
         return print("We do not need to improve your happiness.")
-    #     index_max = 0
-    #     preference_matrix_A_acc = [[1]]
     print("vector_happiness after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max]
 
