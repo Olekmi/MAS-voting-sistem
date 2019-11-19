@@ -154,6 +154,9 @@ def bullet_voting(preference_matrix, voter):
     bullet_pref_matrix[1:, voter] = -1
     return bullet_pref_matrix
 
+def risk_calculate(number_of_options,number_of_voters):
+    risk = (abs(number_of_options))/number_of_voters
+    return risk
 
 
 ##-------------------------MAIN------------------------------------
@@ -176,7 +179,7 @@ happiness_vector_bullet = calculate_happiness(preference_matrix, bullet_outcome)
 print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet), "\n\n")
 
 def Compromising(happiness_scores, preference_matrix, voter):
-    counter = 0
+    number_of_options = 0
     vector_happiness = []
     new_happiness_score = []
     preference_matrix_A_acc = []
@@ -185,7 +188,7 @@ def Compromising(happiness_scores, preference_matrix, voter):
         for j in range(preference_matrix.shape[0]):
             if j>0: #we do not change the top preference, only an alternative
                 for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
-                    counter += 1
+                    number_of_options += 1
                     g = preference_matrix.shape[0] - g-1#inversing index
                     preference_matrix_A = preference_matrix
                     alternative_A = preference_matrix_A[j][voter-1]
@@ -203,7 +206,12 @@ def Compromising(happiness_scores, preference_matrix, voter):
     else:
         return print("We do not need to improve your happiness.")
     print("vector_happiness after compromising voting",vector_happiness[index_max])
-    return preference_matrix_A_acc[index_max]
+    return preference_matrix_A_acc[index_max], number_of_options
 
-strategy_Compromising = Compromising(happiness_vector, preference_matrix, voter)
+strategy_Compromising, number_of_options = Compromising(happiness_vector, preference_matrix, voter)
+# risk_honest = risk_calculate(1,number_of_voters)#just let's discuss it over
+risk_compromising = risk_calculate(number_of_options,number_of_voters)
 print(strategy_Compromising)
+print(number_of_options)
+# print("risk honest =",risk_honest)
+print("risk compromising =",risk_compromising)
