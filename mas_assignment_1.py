@@ -181,6 +181,39 @@ def tactical_voter(voting_scheme, preference_matrix):
 
     return outcome, overall_happiness, strategic_options, risk  
 
+def Compromising(happiness_scores, preference_matrix, voter):
+    number_of_options = 0
+    vector_happiness = []
+    new_happiness_score = []
+    preference_matrix_A_acc = []
+    if happiness_scores[voter-1] != 1:#because the index starts frm 0
+        print("We will try to improve your happiness.")
+        for j in range(preference_matrix.shape[0]):
+            if j>0: #we do not change the top preference, only an alternative
+                for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
+                    number_of_options += 1
+                    g = preference_matrix.shape[0] - g-1#inversing index
+                    preference_matrix_A = preference_matrix
+                    alternative_A = preference_matrix_A[j][voter-1]
+                    preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
+                    preference_matrix_A[g][voter-1] = alternative_A
+                    outcome_A = antiplurality_calculate_outcome(preference_matrix_A)
+
+                    new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
+                    vector_happiness.append(new_happiness_score[voter-1])
+                    preference_matrix_A_acc.append(preference_matrix_A)
+        max_h = max(vector_happiness)
+        index_max = vector_happiness.index(max_h)
+        if max_h <= happiness_scores[voter-1]:
+            print("We cannot improve your happiness.")
+            return happiness_scores[voter-1], number_of_options 
+    else:
+        print("We do not need to improve your happiness.")
+        return happiness_scores[voter-1], number_of_options 
+    print("vector_happiness after compromising voting",vector_happiness[index_max])
+    return preference_matrix_A_acc[index_max], number_of_options
+
+    
 ##-------------------------MAIN------------------------------------
 
 #arguments
@@ -221,37 +254,6 @@ print(bullet_outcome_borda)
 happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
 print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
 
-def Compromising(happiness_scores, preference_matrix, voter):
-    number_of_options = 0
-    vector_happiness = []
-    new_happiness_score = []
-    preference_matrix_A_acc = []
-    if happiness_scores[voter-1] != 1:#because the index starts frm 0
-        print("We will try to improve your happiness.")
-        for j in range(preference_matrix.shape[0]):
-            if j>0: #we do not change the top preference, only an alternative
-                for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
-                    number_of_options += 1
-                    g = preference_matrix.shape[0] - g-1#inversing index
-                    preference_matrix_A = preference_matrix
-                    alternative_A = preference_matrix_A[j][voter-1]
-                    preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
-                    preference_matrix_A[g][voter-1] = alternative_A
-                    outcome_A = antiplurality_calculate_outcome(preference_matrix_A)
-
-                    new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
-                    vector_happiness.append(new_happiness_score[voter-1])
-                    preference_matrix_A_acc.append(preference_matrix_A)
-        max_h = max(vector_happiness)
-        index_max = vector_happiness.index(max_h)
-        if max_h <= happiness_scores[voter-1]:
-            print("We cannot improve your happiness.")
-            return happiness_scores[voter-1], number_of_options 
-    else:
-        print("We do not need to improve your happiness.")
-        return happiness_scores[voter-1], number_of_options 
-    print("vector_happiness after compromising voting",vector_happiness[index_max])
-    return preference_matrix_A_acc[index_max], number_of_options
 
 strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter)
 # risk_honest = risk_calculate(1,number_of_voters)#just let's discuss it over
