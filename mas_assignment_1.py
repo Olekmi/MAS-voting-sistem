@@ -3,6 +3,8 @@ import operator
 import collections
 import random
 import util
+import os.path as op
+import pandas as pd
 
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
@@ -10,6 +12,18 @@ import util
 number_of_preferences = 5
 number_of_voters = 8
 voter = 8
+
+def return_pref_matrix_from_file(file_name):
+    assert op.isfile(file_name),"the file specified does not exists, please use another file"
+    
+    splitted_file_name = file_name.split(".")
+    assert splitted_file_name[1] == "txt", "the file specified is not a text file, please use a text file instead"
+
+    data = pd.read_csv(file_name, header = None)
+
+    assert data.isnull().values.any() == False, "it seems the file is not comma separated, please use a csv instead"
+    
+    return data.to_numpy()
 
 def gen_random_preference_matrix(number_of_preferences,number_of_voters):
     preference_matrix = random.sample(range(number_of_preferences),number_of_preferences)
