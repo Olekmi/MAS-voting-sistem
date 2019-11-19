@@ -5,6 +5,7 @@ import random
 import util
 import os.path as op
 import pandas as pd
+import argparse
 
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
@@ -172,8 +173,30 @@ def risk_calculate(number_of_options,number_of_voters):
     risk = (abs(number_of_options))/number_of_voters
     return risk
 
+def tactical_voter(voting_scheme, preference_matrix):
+    outcome = "1"
+    overall_happiness = "2"
+    strategic_options = "3"
+    risk = "4"
+
+    return outcome, overall_happiness, strategic_options, risk  
 
 ##-------------------------MAIN------------------------------------
+
+#arguments
+parser = argparse.ArgumentParser(description='choose the voting scheme and the input matrix.')
+parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (vote1, vote2, anti_plurality, borda)')
+parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference matrix text file path')
+args = parser.parse_args()
+
+if args.scheme and args.pref_matrix_path:
+    preference_matrix = return_pref_matrix_from_file(args.pref_matrix_path)
+    print("Calculating strategic voting for: ", args.scheme, " scheme\n")
+    print("input preference matrix:\n", preference_matrix)
+    print(tactical_voter(args.scheme, preference_matrix))
+    quit()
+
+
 
 preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
 # preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
