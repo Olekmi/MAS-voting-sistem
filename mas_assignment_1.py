@@ -166,17 +166,23 @@ preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of
 print(preference_matrix)
 
 #HAPPINESS WITH HONEST VOTING
-outcome = antiplurality_calculate_outcome(preference_matrix)
-print(outcome)
-happiness_vector = calculate_happiness(preference_matrix, outcome)
-print("HAPPINESS:\n", np.vstack(happiness_vector), "\n\n")
+outcome_borda = borda_calculate_outcome(preference_matrix)
+outcome_plurality = plurality_calculate_outcome(preference_matrix)
+outcome_voting_for_two = voting_for_two_calculate_outcome(preference_matrix)
+outcome_antiplurality = antiplurality_calculate_outcome(preference_matrix)
+print(outcome_borda)
+happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
+happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
+happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
+happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
+print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
 bullet_matrix = bullet_voting(preference_matrix, 0)
-bullet_outcome = borda_calculate_outcome(bullet_matrix)
-print(bullet_outcome)
-happiness_vector_bullet = calculate_happiness(preference_matrix, bullet_outcome)
-print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet), "\n\n")
+bullet_outcome_borda = borda_calculate_outcome(bullet_matrix)
+print(bullet_outcome_borda)
+happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
+print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
 
 def Compromising(happiness_scores, preference_matrix, voter):
     number_of_options = 0
@@ -202,13 +208,15 @@ def Compromising(happiness_scores, preference_matrix, voter):
         max_h = max(vector_happiness)
         index_max = vector_happiness.index(max_h)
         if max_h <= happiness_scores[voter-1]:
-            return print("We cannot improve your happiness.")
+            print("We cannot improve your happiness.")
+            return happiness_scores[voter-1], number_of_options 
     else:
-        return print("We do not need to improve your happiness.")
+        print("We do not need to improve your happiness.")
+        return happiness_scores[voter-1], number_of_options 
     print("vector_happiness after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max], number_of_options
 
-strategy_Compromising, number_of_options = Compromising(happiness_vector, preference_matrix, voter)
+strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter)
 # risk_honest = risk_calculate(1,number_of_voters)#just let's discuss it over
 risk_compromising = risk_calculate(number_of_options,number_of_voters)
 print(strategy_Compromising)
