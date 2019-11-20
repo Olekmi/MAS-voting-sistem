@@ -12,7 +12,7 @@ import argparse
 
 number_of_preferences = 5
 number_of_voters = 8
-voter = 8
+voter = 2
 def matrix_to_string(matrix):
     for j in range(matrix.shape[0]):
         matrix_ascii = []
@@ -22,18 +22,18 @@ def matrix_to_string(matrix):
             matrix_string = matrix_ascii
         else:
             matrix_string = np.vstack((matrix_string,matrix_ascii))
-    return matrix_string       
+    return matrix_string
 
 def return_pref_matrix_from_file(file_name):
     assert op.isfile(file_name),"the file specified does not exists, please use another file"
-    
+
     splitted_file_name = file_name.split(".")
     assert splitted_file_name[1] == "txt", "the file specified is not a text file, please use a text file instead"
 
     data = pd.read_csv(file_name, header = None)
 
     assert data.isnull().values.any() == False, "it seems the file is not comma separated, please use a csv instead"
-    
+
     return data.to_numpy()
 
 def gen_random_preference_matrix(number_of_preferences,number_of_voters):
@@ -97,6 +97,7 @@ def plurality_calculate_outcome(preference_matrix):
         del outcome[-1]
     except KeyError:
         False
+
     return outcome
 
 def voting_for_two_calculate_outcome(preference_matrix):
@@ -165,7 +166,7 @@ def calculate_happiness(preference_matrix, outcome):
         total_distance = 0
         for pos, pref in enumerate(prefs):
             if pref == -1: break # for bullet voting
-            k = prefs_size - np.where(outcome == pref)[0][0] #current position (in the voting outcome) 
+            k = prefs_size - np.where(outcome == pref)[0][0] #current position (in the voting outcome)
             w = prefs_size - pos # “desired” position (in the voter’s true preference list)
             total_distance += (k - w) * w #weighted distance
 
@@ -183,13 +184,41 @@ def risk_calculate(number_of_options,number_of_voters):
     risk = (abs(number_of_options))/number_of_voters
     return risk
 
-def tactical_voter(voting_scheme, preference_matrix):
-    outcome = "1"
+def calculate_outcome(voting_scheme, preference_matrix):
+    if voting_scheme == "plurality":
+        outcome = plurality_calculate_outcome(preference_matrix)
+    elif voting_scheme == "vote2":
+        outcome = voting_for_two_calculate_outcome(preference_matrix)
+    elif voting_scheme == "anti_plurality":
+        outcome = antiplurality_calculate_outcome(preference_matrix)
+    elif voting_scheme == "borda":
+        outcome = borda_calculate_outcome(preference_matrix)
+    else:
+        print("voting scheme not recognized, calculating for plurality voting")
+        outcome = borda_calculate_outcome(preference_matrix)
+
+    return outcome
+
+
+def tactical_voter(voting_scheme, preference_matrix, voter):
+
+    outcome = calculate_outcome(voting_scheme, preference_matrix)
+
+    happiness_vector = calculate_happiness(preference_matrix, outcome)
+
+    #TODO: calculate properly
+    bullet_matrix = bullet_voting(preference_matrix, voter)
+    bullet_outcome = calculate_outcome(voting_scheme, bullet_matrix)
+
+    strategy_Compromising, number_of_options = Compromising(happiness_vector, preference_matrix, voter)
+
+    risk = risk_calculate(number_of_options, preference_matrix.shape[1])
+
+    #TODO:
     overall_happiness = "2"
     strategic_options = "3"
-    risk = "4"
 
-    return outcome, overall_happiness, strategic_options, risk  
+    return outcome, overall_happiness, strategic_options, risk
 
 def Compromising(happiness_scores, preference_matrix, voter):
     number_of_options = 0
@@ -216,36 +245,36 @@ def Compromising(happiness_scores, preference_matrix, voter):
         index_max = vector_happiness.index(max_h)
         if max_h <= happiness_scores[voter-1]:
             print("We cannot improve your happiness.")
-            return happiness_scores[voter-1], number_of_options 
+            return happiness_scores[voter-1], number_of_options
     else:
         print("We do not need to improve your happiness.")
-        return happiness_scores[voter-1], number_of_options 
+        return happiness_scores[voter-1], number_of_options
     print("vector_happiness after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max], number_of_options
 
-    
+
 ##-------------------------MAIN------------------------------------
 
 #arguments
 parser = argparse.ArgumentParser(description='choose the voting scheme and the input matrix.')
-parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (vote1, vote2, anti_plurality, borda)')
+parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (plurality, vote2, anti_plurality, borda)')
 parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference matrix text file path')
 args = parser.parse_args()
 
-if args.scheme and args.pref_matrix_path:
+if args.pref_matrix_path:
     preference_matrix = return_pref_matrix_from_file(args.pref_matrix_path)
-    print("Calculating strategic voting for: ", args.scheme, " scheme\n")
     print("input preference matrix:\n", preference_matrix)
-    print(tactical_voter(args.scheme, preference_matrix))
-    quit()
 
-
-
-preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
-# preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
-preference_matrix_string = matrix_to_string(preference_matrix)
-print(preference_matrix)
-print(preference_matrix_string)
+    if args.scheme:
+        print("Calculating strategic voting for: ", args.scheme, " scheme\n")
+        print(tactical_voter(args.scheme, preference_matrix, voter))
+        quit()
+else:
+    preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
+    # preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
+    print(preference_matrix)
+    # preference_matrix_string = matrix_to_string(preference_matrix)
+    # print(preference_matrix_string)
 
 #HAPPINESS WITH HONEST VOTING
 outcome_borda = borda_calculate_outcome(preference_matrix)
