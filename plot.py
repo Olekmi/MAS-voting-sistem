@@ -2,20 +2,8 @@ import mas_assignment_1
 import plotly.graph_objects as go
 from plotly.colors import n_colors
 import numpy as np
+import util
 np.random.seed(1)
-
-def number_to_ascii(keys):
-  keys_ascii = []
-  for i in range(len(keys)):
-    keys_ascii.append(chr(ord('@')+keys[i]+1))
-  return keys_ascii
-  
-def join_strings_for_graph(keys,keys_ascii,values):
-  text = []    
-  for i in range(len(keys)):
-    text.append(str(keys_ascii[i]) + ": " + str(values[i]))
-  return text
-
 
 colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', 30, colortype='rgb')
 a = np.array([mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
@@ -62,15 +50,15 @@ values_honest_voting_for_two= list(mas_assignment_1.outcome_voting_for_two.value
 values_honest_antiplurality = list(mas_assignment_1.outcome_antiplurality.values())
 values_honest_borda = list(mas_assignment_1.outcome_borda.values())
 
-keys_ascii_honest_plurality = number_to_ascii(keys_honest_plurality)
-keys_ascii_honest_voting_for_two = number_to_ascii(keys_honest_voting_for_two)
-keys_ascii_honest_antiplurality = number_to_ascii(keys_honest_antiplurality)
-keys_ascii_honest_borda = number_to_ascii(keys_honest_borda)
+keys_ascii_honest_plurality = util.number_to_ascii(keys_honest_plurality)
+keys_ascii_honest_voting_for_two = util.number_to_ascii(keys_honest_voting_for_two)
+keys_ascii_honest_antiplurality = util.number_to_ascii(keys_honest_antiplurality)
+keys_ascii_honest_borda = util.number_to_ascii(keys_honest_borda)
 
-text_honest_plurality = join_strings_for_graph(keys_honest_plurality,keys_ascii_honest_plurality,values_honest_plurality)
-text_honest_voting_for_two = join_strings_for_graph(keys_honest_voting_for_two,keys_ascii_honest_voting_for_two,values_honest_voting_for_two)
-text_honest_antiplurality = join_strings_for_graph(keys_honest_antiplurality,keys_ascii_honest_antiplurality,values_honest_antiplurality)
-text_honest_borda = join_strings_for_graph(keys_honest_borda,keys_ascii_honest_borda,values_honest_borda)
+text_honest_plurality = util.join_strings_for_graph(keys_honest_plurality,keys_ascii_honest_plurality,values_honest_plurality)
+text_honest_voting_for_two = util.join_strings_for_graph(keys_honest_voting_for_two,keys_ascii_honest_voting_for_two,values_honest_voting_for_two)
+text_honest_antiplurality = util.join_strings_for_graph(keys_honest_antiplurality,keys_ascii_honest_antiplurality,values_honest_antiplurality)
+text_honest_borda = util.join_strings_for_graph(keys_honest_borda,keys_ascii_honest_borda,values_honest_borda)
 
 fig_outcome = go.Figure(data=[go.Table(
   header=dict(

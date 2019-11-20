@@ -5,22 +5,36 @@ Created on Fri Nov 15 21:35:16 2019
 @author: Smail
 """
 import numpy as np
+import os.path as op
+import pandas as pd
 
+def matrix_to_string(matrix):
+    for j in range(matrix.shape[0]):
+        matrix_ascii = []
+        for i in range(matrix.shape[1]):
+            matrix_ascii.append(chr(ord('@')+matrix[j][i]+1))
+        if j == 0:
+            matrix_string = matrix_ascii
+        else:
+            matrix_string = np.vstack((matrix_string,matrix_ascii))
+    return matrix_string
 
-def translate_index_matrix(matrix):
-    indexes = []
-    for i in range(matrix.shape[1]):
-        for j in range(matrix.shape[0]):
-            if (i == matrix.shape[1] - 1):
-                indexes.append(matrix.shape[0] - j)
-    indexes_numpy = np.asarray(indexes,dtype=np.int32)
-    indexes_numpy = np.reshape(indexes_numpy,(matrix.shape[0],1))
-    return indexes_numpy
-
-
-def translate_index_dictionary(preference_matrix,outcome_dictionary):
-    indexes= np.ones((preference_matrix.shape[0],preference_matrix.shape[1]), dtype=np.int32)
-    for i in range(preference_matrix.shape[1]):
-        for j in range(preference_matrix.shape[0]):
-            indexes[j][i] = len(outcome_dictionary) - list(outcome_dictionary.keys()).index(preference_matrix[j][i])
-    return indexes
+def return_pref_matrix_from_file(file_name):
+    assert op.isfile(file_name),"the file specified does not exists, please use another file"
+    splitted_file_name = file_name.split(".")
+    assert splitted_file_name[1] == "txt", "the file specified is not a text file, please use a text file instead"
+    data = pd.read_csv(file_name, header = None)
+    assert data.isnull().values.any() == False, "it seems the file is not comma separated, please use a csv instead"
+    return data.to_numpy()
+    
+def number_to_ascii(keys):
+  keys_ascii = []
+  for i in range(len(keys)):
+    keys_ascii.append(chr(ord('@')+keys[i]+1))
+  return keys_ascii
+  
+def join_strings_for_graph(keys,keys_ascii,values):
+  text = []    
+  for i in range(len(keys)):
+    text.append(str(keys_ascii[i]) + ": " + str(values[i]))
+  return text
