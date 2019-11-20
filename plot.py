@@ -17,7 +17,7 @@ def join_strings_for_graph(keys,keys_ascii,values):
   return text
 
 
-colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', 9, colortype='rgb')
+colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', 30, colortype='rgb')
 a = np.array([mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
 a_int = a.astype(int)
 
@@ -80,8 +80,8 @@ fig_outcome = go.Figure(data=[go.Table(
   ),
   cells=dict(
     values=[text_honest_plurality, text_honest_voting_for_two, text_honest_antiplurality, text_honest_borda],
-    line_color=[np.array(colors)[values_honest_plurality],np.array(colors)[values_honest_voting_for_two],np.array(colors)[values_honest_antiplurality], np.array(colors)[values_honest_antiplurality]],
-    fill_color=[np.array(colors)[values_honest_plurality],np.array(colors)[values_honest_voting_for_two],np.array(colors)[values_honest_antiplurality], np.array(colors)[values_honest_antiplurality]],
+    line_color=[np.array(colors)[values_honest_plurality],np.array(colors)[values_honest_voting_for_two],np.array(colors)[values_honest_antiplurality], np.array(colors)[values_honest_borda]],
+    fill_color=[np.array(colors)[values_honest_plurality],np.array(colors)[values_honest_voting_for_two],np.array(colors)[values_honest_antiplurality], np.array(colors)[values_honest_borda]],
     align='center', font=dict(color='black', size=12)
     ))
 ])
