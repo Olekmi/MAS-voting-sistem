@@ -12,7 +12,7 @@ import argparse
 
 number_of_preferences = 5
 number_of_voters = 8
-voter = 8
+voter = 2
 
 def return_pref_matrix_from_file(file_name):
     assert op.isfile(file_name),"the file specified does not exists, please use another file"
@@ -222,18 +222,18 @@ parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme:
 parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference matrix text file path')
 args = parser.parse_args()
 
-if args.scheme and args.pref_matrix_path:
+if args.pref_matrix_path:
     preference_matrix = return_pref_matrix_from_file(args.pref_matrix_path)
-    print("Calculating strategic voting for: ", args.scheme, " scheme\n")
     print("input preference matrix:\n", preference_matrix)
-    print(tactical_voter(args.scheme, preference_matrix))
-    quit()
 
-
-
-preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
-# preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
-print(preference_matrix)
+    if args.scheme:
+        print("Calculating strategic voting for: ", args.scheme, " scheme\n")
+        print(tactical_voter(args.scheme, preference_matrix))
+        quit()
+else:
+    preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
+    # preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
+    print(preference_matrix)
 
 #HAPPINESS WITH HONEST VOTING
 outcome_borda = borda_calculate_outcome(preference_matrix)
