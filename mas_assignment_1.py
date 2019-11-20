@@ -2,11 +2,10 @@ import numpy as np
 import operator
 import collections
 import random
-import util
 import os.path as op
 import pandas as pd
 import argparse
-
+import voting_schemes as vs
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
 
@@ -47,124 +46,6 @@ def generate_fixed_pref_matrix(number_of_preferences,number_of_voters):
     preference_matrix = np.repeat([preference_matrix],number_of_voters,axis=0)
     return preference_matrix.T
 
-def borda_calculate_outcome(preference_matrix):
-    outcome = {}
-    for j in range(preference_matrix.shape[0]):
-        temp = []
-        for i in range(preference_matrix.shape[1]):
-            temp.append(preference_matrix[j][i])
-        unique, counts = np.unique(temp, return_counts=True)
-        dict_uniques = dict(zip(unique, counts))
-        # print("dict",dict_uniques)
-
-        for key in dict_uniques:
-            dict_uniques[key] *=  (preference_matrix.shape[0] - 1 - j)
-        for key in dict_uniques:
-            if key in outcome:
-                outcome[key] += dict_uniques[key]
-            else:
-                outcome[key] = dict_uniques[key]
-    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
-    #in case of bullet voting
-    try:
-        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
-            del outcome['-1']
-        else:
-            del outcome[-1]
-    except KeyError:
-        False
-
-    return outcome
-
-def plurality_calculate_outcome(preference_matrix):
-    outcome = {}
-    k = 0
-    for j in range(preference_matrix.shape[0]):
-        if j > 0:
-            k = 1
-        temp = []
-        for i in range(preference_matrix.shape[1]):
-            temp.append(preference_matrix[j][i])
-        unique, counts = np.unique(temp, return_counts=True)
-        dict_uniques = dict(zip(unique, counts))
-        for key in dict_uniques:
-            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)#we give weights only to top preference
-        for key in dict_uniques:
-            if key in outcome:
-                outcome[key] += dict_uniques[key]
-            else:
-                outcome[key] = dict_uniques[key]
-    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
-    #in case of bullet voting
-    try:
-        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
-            del outcome['-1']
-        else:
-            del outcome[-1]
-    except KeyError:
-        False
-
-    return outcome
-
-def voting_for_two_calculate_outcome(preference_matrix):
-    outcome = {}
-    k = 0
-    for j in range(preference_matrix.shape[0]):
-        if j > 1:
-            k = 1
-        temp = []
-        for i in range(preference_matrix.shape[1]):
-            temp.append(preference_matrix[j][i])
-        unique, counts = np.unique(temp, return_counts=True)
-        dict_uniques = dict(zip(unique, counts))
-        for key in dict_uniques:
-            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)#we give weights only to 2 top preferences
-        for key in dict_uniques:
-            if key in outcome:
-                outcome[key] += dict_uniques[key]
-            else:
-                outcome[key] = dict_uniques[key]
-    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
-    #in case of bullet voting
-    try:
-        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
-            del outcome['-1']
-        else:
-            del outcome[-1]
-    except KeyError:
-        False
-    return outcome
-
-def antiplurality_calculate_outcome(preference_matrix):
-    outcome = {}
-    k = 0
-    for j in range(preference_matrix.shape[0]):
-        if j > preference_matrix.shape[0]-2:
-            k = 1
-        temp = []
-        for i in range(preference_matrix.shape[1]):
-            temp.append(preference_matrix[j][i])
-        unique, counts = np.unique(temp, return_counts=True)
-        dict_uniques = dict(zip(unique, counts))
-        for key in dict_uniques:
-            dict_uniques[key] *=  (preference_matrix.shape[0] + 1 - preference_matrix.shape[0] - k)#we give weights only to 2 top preferences
-        for key in dict_uniques:
-            if key in outcome:
-                outcome[key] += dict_uniques[key]
-            else:
-                outcome[key] = dict_uniques[key]
-    outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
-    #in case of bullet voting
-    try:
-        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
-            del outcome['-1']
-        else:
-            del outcome[-1]
-    except KeyError:
-        False
-    return outcome
-
-
 def happiness_player(total_distance_players):
     happiness_player = 1/(1+np.abs(total_distance_players))
     return happiness_player
@@ -198,16 +79,16 @@ def risk_calculate(number_of_options,number_of_voters):
 
 def calculate_outcome(voting_scheme, preference_matrix):
     if voting_scheme == "plurality":
-        outcome = plurality_calculate_outcome(preference_matrix)
+        outcome = vs.plurality_calculate_outcome(preference_matrix)
     elif voting_scheme == "vote2":
-        outcome = voting_for_two_calculate_outcome(preference_matrix)
+        outcome = vs.voting_for_two_calculate_outcome(preference_matrix)
     elif voting_scheme == "anti_plurality":
-        outcome = antiplurality_calculate_outcome(preference_matrix)
+        outcome = vs.antiplurality_calculate_outcome(preference_matrix)
     elif voting_scheme == "borda":
-        outcome = borda_calculate_outcome(preference_matrix)
+        outcome = vs.borda_calculate_outcome(preference_matrix)
     else:
         print("voting scheme not recognized, calculating for plurality voting")
-        outcome = borda_calculate_outcome(preference_matrix)
+        outcome = vs.borda_calculate_outcome(preference_matrix)
 
     return outcome
 
@@ -248,7 +129,7 @@ def Compromising(happiness_scores, preference_matrix, voter):
                     alternative_A = preference_matrix_A[j][voter-1]
                     preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
                     preference_matrix_A[g][voter-1] = alternative_A
-                    outcome_A = antiplurality_calculate_outcome(preference_matrix_A)
+                    outcome_A = vs.antiplurality_calculate_outcome(preference_matrix_A)
 
                     new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
                     vector_happiness.append(new_happiness_score[voter-1])
@@ -289,10 +170,10 @@ else:
     # print(preference_matrix_string)
 
 #HAPPINESS WITH HONEST VOTING
-outcome_borda = borda_calculate_outcome(preference_matrix)
-outcome_plurality = plurality_calculate_outcome(preference_matrix)
-outcome_voting_for_two = voting_for_two_calculate_outcome(preference_matrix)
-outcome_antiplurality = antiplurality_calculate_outcome(preference_matrix)
+outcome_borda = vs.borda_calculate_outcome(preference_matrix)
+outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
+outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
+outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
 print(outcome_borda)
 happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
 happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
@@ -302,7 +183,7 @@ print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
 bullet_matrix = bullet_voting(preference_matrix, 0)
-bullet_outcome_borda = borda_calculate_outcome(bullet_matrix)
+bullet_outcome_borda = vs.borda_calculate_outcome(bullet_matrix)
 print(bullet_outcome_borda)
 happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
 print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
