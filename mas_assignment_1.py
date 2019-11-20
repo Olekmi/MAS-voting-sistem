@@ -67,7 +67,10 @@ def borda_calculate_outcome(preference_matrix):
     outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
     #in case of bullet voting
     try:
-        del outcome[-1]
+        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
+            del outcome['-1']
+        else:
+            del outcome[-1]
     except KeyError:
         False
 
@@ -94,7 +97,10 @@ def plurality_calculate_outcome(preference_matrix):
     outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
     #in case of bullet voting
     try:
-        del outcome[-1]
+        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
+            del outcome['-1']
+        else:
+            del outcome[-1]
     except KeyError:
         False
 
@@ -121,7 +127,10 @@ def voting_for_two_calculate_outcome(preference_matrix):
     outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
     #in case of bullet voting
     try:
-        del outcome[-1]
+        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
+            del outcome['-1']
+        else:
+            del outcome[-1]
     except KeyError:
         False
     return outcome
@@ -147,7 +156,10 @@ def antiplurality_calculate_outcome(preference_matrix):
     outcome = dict(sorted(outcome.items(), key=lambda outcome: outcome[1], reverse=True))
     #in case of bullet voting
     try:
-        del outcome[-1]
+        if (list(outcome.items())[0][0].dtype == np.dtype('<U1')): # checking if it is of type numpy string
+            del outcome['-1']
+        else:
+            del outcome[-1]
     except KeyError:
         False
     return outcome
