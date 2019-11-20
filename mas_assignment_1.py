@@ -87,6 +87,7 @@ def plurality_calculate_outcome(preference_matrix):
         del outcome[-1]
     except KeyError:
         False
+
     return outcome
 
 def voting_for_two_calculate_outcome(preference_matrix):
@@ -173,11 +174,39 @@ def risk_calculate(number_of_options,number_of_voters):
     risk = (abs(number_of_options))/number_of_voters
     return risk
 
-def tactical_voter(voting_scheme, preference_matrix):
-    outcome = "1"
+def calculate_outcome(voting_scheme, preference_matrix):
+    if voting_scheme == "plurality":
+        outcome = plurality_calculate_outcome(preference_matrix)
+    elif voting_scheme == "vote2":
+        outcome = voting_for_two_calculate_outcome(preference_matrix)
+    elif voting_scheme == "anti_plurality":
+        outcome = antiplurality_calculate_outcome(preference_matrix)
+    elif voting_scheme == "borda":
+        outcome = borda_calculate_outcome(preference_matrix)
+    else:
+        print("voting scheme not recognized, calculating for plurality voting")
+        outcome = borda_calculate_outcome(preference_matrix)
+    
+    return outcome
+
+
+def tactical_voter(voting_scheme, preference_matrix, voter):
+
+    outcome = calculate_outcome(voting_scheme, preference_matrix)
+
+    happiness_vector = calculate_happiness(preference_matrix, outcome)
+
+    #TODO: calculate properly
+    bullet_matrix = bullet_voting(preference_matrix, voter)
+    bullet_outcome = calculate_outcome(voting_scheme, bullet_matrix)
+
+    strategy_Compromising, number_of_options = Compromising(happiness_vector, preference_matrix, voter)
+    
+    risk = risk_calculate(number_of_options, preference_matrix.shape[1])
+
+    #TODO:
     overall_happiness = "2"
     strategic_options = "3"
-    risk = "4"
 
     return outcome, overall_happiness, strategic_options, risk  
 
@@ -218,7 +247,7 @@ def Compromising(happiness_scores, preference_matrix, voter):
 
 #arguments
 parser = argparse.ArgumentParser(description='choose the voting scheme and the input matrix.')
-parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (vote1, vote2, anti_plurality, borda)')
+parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (plurality, vote2, anti_plurality, borda)')
 parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference matrix text file path')
 args = parser.parse_args()
 
@@ -228,7 +257,7 @@ if args.pref_matrix_path:
 
     if args.scheme:
         print("Calculating strategic voting for: ", args.scheme, " scheme\n")
-        print(tactical_voter(args.scheme, preference_matrix))
+        print(tactical_voter(args.scheme, preference_matrix, voter))
         quit()
 else:
     preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
