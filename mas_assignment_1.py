@@ -13,6 +13,16 @@ import argparse
 number_of_preferences = 5
 number_of_voters = 8
 voter = 8
+def matrix_to_string(matrix):
+    for j in range(matrix.shape[0]):
+        matrix_ascii = []
+        for i in range(matrix.shape[1]):
+            matrix_ascii.append(chr(ord('@')+matrix[j][i]+1))
+        if j == 0:
+            matrix_string = matrix_ascii
+        else:
+            matrix_string = np.vstack((matrix_string,matrix_ascii))
+    return matrix_string       
 
 def return_pref_matrix_from_file(file_name):
     assert op.isfile(file_name),"the file specified does not exists, please use another file"
@@ -233,7 +243,9 @@ if args.scheme and args.pref_matrix_path:
 
 preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
 # preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
+preference_matrix_string = matrix_to_string(preference_matrix)
 print(preference_matrix)
+print(preference_matrix_string)
 
 #HAPPINESS WITH HONEST VOTING
 outcome_borda = borda_calculate_outcome(preference_matrix)
