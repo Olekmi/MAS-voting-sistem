@@ -27,7 +27,7 @@ text_honest_antiplurality = util.join_strings_for_graph(keys_honest_antipluralit
 text_honest_borda = util.join_strings_for_graph(keys_honest_borda,keys_ascii_honest_borda,values_honest_borda)
 
 #----------Happiness for all schemes and all strategies for an agent------------
-colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', max(values_honest_borda), colortype='rgb')
+colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', max(values_honest_borda)+1, colortype='rgb')
 a = np.array([mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
 a_int = a.astype(int)
 

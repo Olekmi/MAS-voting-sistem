@@ -9,7 +9,7 @@ import voting_schemes as vs
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
 
-number_of_preferences = 130
+number_of_preferences = 6
 number_of_voters = 8
 voter = 2
 
@@ -123,6 +123,16 @@ def Compromising(happiness_scores, preference_matrix, voter):
     print("vector_happiness after compromising voting",vector_happiness[index_max])
     return preference_matrix_A_acc[index_max], number_of_options
 
+def choose_strategic_voter(preference_matrix,strategic_option):
+    for voter in range(number_of_voters):
+        for j in range(preference_matrix.shape[0]):
+            if j>0: #we do not change the top preference, only an alternative
+                for g in range(preference_matrix.shape[0]-j-1):
+                    number_of_options += 1
+                    
+
+
+
 
 ##-------------------------MAIN------------------------------------
 
@@ -133,7 +143,7 @@ parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference ma
 args = parser.parse_args()
 
 if args.pref_matrix_path:
-    preference_matrix = return_pref_matrix_from_file(args.pref_matrix_path)
+    preference_matrix = util.return_pref_matrix_from_file(args.pref_matrix_path)
     print("input preference matrix:\n", preference_matrix)
 
     if args.scheme:
