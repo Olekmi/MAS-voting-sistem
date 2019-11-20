@@ -9,7 +9,7 @@ import voting_schemes as vs
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
 
-number_of_preferences = 5
+number_of_preferences = 130
 number_of_voters = 8
 voter = 2
 

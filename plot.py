@@ -3,9 +3,31 @@ import plotly.graph_objects as go
 from plotly.colors import n_colors
 import numpy as np
 import util
-np.random.seed(1)
 
-colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', 30, colortype='rgb')
+#-----------------------------------------------------------------------#
+#OUTCOME WITH HONEST VOTING FOR 4 VOTING SCHEMES
+keys_honest_plurality = list(mas_assignment_1.outcome_plurality)
+keys_honest_voting_for_two = list(mas_assignment_1.outcome_voting_for_two)
+keys_honest_antiplurality = list(mas_assignment_1.outcome_antiplurality)
+keys_honest_borda = list(mas_assignment_1.outcome_borda)
+
+values_honest_plurality= list(mas_assignment_1.outcome_plurality.values())
+values_honest_voting_for_two= list(mas_assignment_1.outcome_voting_for_two.values())
+values_honest_antiplurality = list(mas_assignment_1.outcome_antiplurality.values())
+values_honest_borda = list(mas_assignment_1.outcome_borda.values())
+
+keys_ascii_honest_plurality = util.number_to_ascii(keys_honest_plurality)
+keys_ascii_honest_voting_for_two = util.number_to_ascii(keys_honest_voting_for_two)
+keys_ascii_honest_antiplurality = util.number_to_ascii(keys_honest_antiplurality)
+keys_ascii_honest_borda = util.number_to_ascii(keys_honest_borda)
+
+text_honest_plurality = util.join_strings_for_graph(keys_honest_plurality,keys_ascii_honest_plurality,values_honest_plurality)
+text_honest_voting_for_two = util.join_strings_for_graph(keys_honest_voting_for_two,keys_ascii_honest_voting_for_two,values_honest_voting_for_two)
+text_honest_antiplurality = util.join_strings_for_graph(keys_honest_antiplurality,keys_ascii_honest_antiplurality,values_honest_antiplurality)
+text_honest_borda = util.join_strings_for_graph(keys_honest_borda,keys_ascii_honest_borda,values_honest_borda)
+
+#----------Happiness for all schemes and all strategies for an agent------------
+colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', max(values_honest_borda), colortype='rgb')
 a = np.array([mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
 a_int = a.astype(int)
 
@@ -37,29 +59,7 @@ fig.update_layout(
 
 fig.show()
 
-#-----------------------------------------------------------------------#
-#OUTCOME WITH HONEST VOTING FOR 4 VOTING SCHEMES
-colors_outcome = n_colors('rgb(255, 200, 200)', 'rgb(100, 0, 0)', 30, colortype='rgb')
-keys_honest_plurality = list(mas_assignment_1.outcome_plurality)
-keys_honest_voting_for_two = list(mas_assignment_1.outcome_voting_for_two)
-keys_honest_antiplurality = list(mas_assignment_1.outcome_antiplurality)
-keys_honest_borda = list(mas_assignment_1.outcome_borda)
-
-values_honest_plurality= list(mas_assignment_1.outcome_plurality.values())
-values_honest_voting_for_two= list(mas_assignment_1.outcome_voting_for_two.values())
-values_honest_antiplurality = list(mas_assignment_1.outcome_antiplurality.values())
-values_honest_borda = list(mas_assignment_1.outcome_borda.values())
-
-keys_ascii_honest_plurality = util.number_to_ascii(keys_honest_plurality)
-keys_ascii_honest_voting_for_two = util.number_to_ascii(keys_honest_voting_for_two)
-keys_ascii_honest_antiplurality = util.number_to_ascii(keys_honest_antiplurality)
-keys_ascii_honest_borda = util.number_to_ascii(keys_honest_borda)
-
-text_honest_plurality = util.join_strings_for_graph(keys_honest_plurality,keys_ascii_honest_plurality,values_honest_plurality)
-text_honest_voting_for_two = util.join_strings_for_graph(keys_honest_voting_for_two,keys_ascii_honest_voting_for_two,values_honest_voting_for_two)
-text_honest_antiplurality = util.join_strings_for_graph(keys_honest_antiplurality,keys_ascii_honest_antiplurality,values_honest_antiplurality)
-text_honest_borda = util.join_strings_for_graph(keys_honest_borda,keys_ascii_honest_borda,values_honest_borda)
-
+#----------Outcome of honest voting for all schemes------------
 fig_outcome = go.Figure(data=[go.Table(
   header=dict(
     values=['<b>Plurality<b>','<b>Voting for two<b>', '<b>Antiplurality<b>', '<b>Borda<b>'],
