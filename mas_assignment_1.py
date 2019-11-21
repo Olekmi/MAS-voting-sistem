@@ -215,38 +215,38 @@ else:
 #    print(len(item))
 
 #print(happiness_list_tuples[0])
-outcome, overall_happiness, strategic_options, risk = tactical_voter("plurality",preference_matrix,0)
-print(strategic_options)
-print(len(strategic_options))
+#outcome, overall_happiness, strategic_options, risk = tactical_voter("plurality",preference_matrix,0)
+#print(strategic_options)
+#print(len(strategic_options))
 
 #HAPPINESS WITH HONEST VOTING
-#outcome_borda = vs.borda_calculate_outcome(preference_matrix)
-#outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
-#outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
-#outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
-#print(outcome_borda)
-#happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
-#happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
-#happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
-#happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
-#print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
-#
-##HAPPINESS WITH BULLET VOTING
-#bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)
-#
-#
-##bullet_outcome_borda = borda_calculate_outcome(bullet_matrix) #
-##print(bullet_outcome_borda)
-##happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
-##print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
-#
-#
-#strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter, voting_scheme)
-## risk_honest = risk_calculate(1,number_of_voters)#just let's discuss it over
-#risk_compromising = risk_calculate(number_of_options,number_of_voters)
-#print(strategy_Compromising)
-#print(number_of_options)
-## print("risk honest =",risk_honest)
-#print("risk compromising =",risk_compromising)
+outcome_borda = vs.borda_calculate_outcome(preference_matrix)
+outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
+outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
+outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
+print(outcome_borda)
+happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
+happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
+happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
+happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
+print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
-# tactical_voter(voting_scheme, preference_matrix, voter)
+#HAPPINESS WITH BULLET VOTING
+bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)
+
+
+#bullet_outcome_borda = borda_calculate_outcome(bullet_matrix) #
+#print(bullet_outcome_borda)
+#happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
+#print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
+
+
+strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter, voting_scheme)
+# risk_honest = risk_calculate(1,number_of_voters)#just let's discuss it over
+risk_compromising = risk_calculate(number_of_options,number_of_voters)
+print(strategy_Compromising)
+print(number_of_options)
+# print("risk honest =",risk_honest)
+print("risk compromising =",risk_compromising)
+
+tactical_voter(voting_scheme, preference_matrix, voter)
