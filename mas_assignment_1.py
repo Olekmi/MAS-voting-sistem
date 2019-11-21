@@ -57,7 +57,7 @@ def bullet_voting(preference_matrix, voter, voting_scheme):
     z_hap_dif = new_overall_happiness[voter] - old_overall_happiness[voter]# change that to voter ???
 #    si_list = [bullet_pref_matrix[:,voter], new_outcome, new_overall_happiness, z_hap_dif]
     z_information = "Bullet voting chosen because the individual happiness was increased by {difference_value:.3f}".format(difference_value = z_hap_dif)
-    si_list = (list(bullet_pref_matrix[:,voter]), new_outcome, list(new_overall_happiness), z_information)
+    si_list = (list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information)
     if z_hap_dif>0:
         #print("AAAAAAAAA")
         number_of_options = 1
@@ -102,17 +102,8 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
 
     risk = risk_calculate(number_of_options, preference_matrix.shape[1])
 
-    #TODO:
     overall_happiness = np.sum(happiness_vector)
     strategic_options = si[:]
-
-#    print("outcome: ", outcome)
-#    print("overall happiness: ", overall_happiness)
-#    print("risk: ", risk)
-#    print("strategic options of the voter: ")
-#    for prnt in strategic_options:
-#        print(prnt)
-
 
     return outcome, overall_happiness, strategic_options, risk
 
@@ -142,7 +133,7 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
                 if z_hap_dif>0:
                     z_information = "Compromising chosen because the individual happiness was increased by {difference_value:.3f}".format(difference_value = z_hap_dif)
 #                    si_list = [preference_matrix_A[:,voter], outcome_A, new_happiness_score, z_information]
-                    si_list = (list(preference_matrix_A[:,voter]), outcome_A, list(new_happiness_score), z_information)
+                    si_list = (list(preference_matrix_A[:,voter]), outcome_A, np.sum(new_happiness_score), z_information)
                     si.append(si_list)
                 vector_happiness.append(new_happiness_score[voter])
                 preference_matrix_A_acc.append(preference_matrix_A)
@@ -226,7 +217,14 @@ if args.pref_matrix_path:
 
     if args.scheme:
         print("Calculating strategic voting for: ", args.scheme, " scheme\n")
-        tactical_voter(args.scheme, preference_matrix, voter)
+        outcome, overall_happiness, strategic_options, risk = tactical_voter(args.scheme, preference_matrix, voter)
+
+        print("outcome: ", outcome)
+        print("overall happiness: ", overall_happiness)
+        print("risk: ", risk)
+        print("strategic options of the voter: ")
+        for prnt in strategic_options:
+            print(prnt)
         quit()
 else:
     preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
