@@ -125,7 +125,7 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
     preference_matrix_A_acc = []
     si =[]
     index_max = 0
-    if happiness_scores[voter-1] != 1:#because the index starts frm 0
+    if happiness_scores[voter] != 1:#because the index starts frm 0
         print("We will try to improve your happiness.")
         for j in range(preference_matrix.shape[0]):
             if j>0: #we do not change the top preference, only an alternative
@@ -134,37 +134,37 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
                     g = preference_matrix.shape[0] - g-1#inversing index
                     # preference_matrix_A = preference_matrix
                     preference_matrix_A = np.array(preference_matrix)#CHANGED-put NP array
-                    alternative_A = preference_matrix_A[j][voter-1]
-                    preference_matrix_A[j][voter-1] = preference_matrix_A[g][voter-1]
-                    preference_matrix_A[g][voter-1] = alternative_A
+                    alternative_A = preference_matrix_A[j][voter]
+                    preference_matrix_A[j][voter] = preference_matrix_A[g][voter]
+                    preference_matrix_A[g][voter] = alternative_A
                     outcome_A = calculate_outcome(voting_scheme, preference_matrix_A)#Changed
 
                     new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
                     
-                    z_hap_dif = new_happiness_score[voter-1]-happiness_scores[voter-1]
+                    z_hap_dif = new_happiness_score[voter]-happiness_scores[voter]
 
                     if z_hap_dif>0:
                         number_of_options += 1
-                        si_list = [preference_matrix_A[:,voter-1], outcome_A, new_happiness_score, z_hap_dif]
+                        si_list = [preference_matrix_A[:,voter], outcome_A, new_happiness_score, z_hap_dif]
                         si.append(si_list)
-                    vector_happiness.append(new_happiness_score[voter-1])
+                    vector_happiness.append(new_happiness_score[voter])
                     preference_matrix_A_acc.append(preference_matrix_A)
         max_h = max(vector_happiness)
         index_max = vector_happiness.index(max_h)
-        if max_h <= happiness_scores[voter-1]:
+        if max_h <= happiness_scores[voter]:
             print("We cannot improve your happiness.")
             number_of_options = 0
         print("vector_happiness after compromising voting",vector_happiness[index_max])
-        print("Outcome=",preference_matrix_A_acc[index_max][:,voter-1])    
+        print("Outcome=",preference_matrix_A_acc[index_max][:,voter])    
     else:
         print("We do not need to improve your happiness.")
         number_of_options = 0
-        print("vector_happiness after compromising voting",happiness_scores[voter-1])
-        print("Outcome=",np.array(preference_matrix)[:,voter-1])
+        print("vector_happiness after compromising voting",happiness_scores[voter])
+        print("Outcome=",np.array(preference_matrix)[:,voter])
 
     #print("AAAA")
 
-    #new_preference_list = preference_matrix_A_acc[index_max][:,voter-1]
+    #new_preference_list = preference_matrix_A_acc[index_max][:,voter]
     #new_outcome = 
     #return preference_matrix_A_acc[index_max], number_of_options 
     #return new_preference_list, new_outcome, new_overall_happiness, difference in happiness for voter, number_of_options
