@@ -6,6 +6,7 @@ import os.path as op
 import pandas as pd
 import argparse
 import voting_schemes as vs
+import util
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
 
@@ -103,7 +104,7 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
     si_comp, number_of_options_comp = Compromising(happiness_vector, preference_matrix, voter, voting_scheme)
 
     if number_of_options_comp==1:
-        si_comp.append(si.bull)
+        si_comp.append(si_bull)
         number_of_options_comp +=1
 
     number_of_options =number_of_options_comp
@@ -123,6 +124,7 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
     new_happiness_score = []
     preference_matrix_A_acc = []
     si =[]
+    index_max = 0
     if happiness_scores[voter-1] != 1:#because the index starts frm 0
         print("We will try to improve your happiness.")
         for j in range(preference_matrix.shape[0]):
@@ -152,13 +154,11 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
         if max_h <= happiness_scores[voter-1]:
             print("We cannot improve your happiness.")
             number_of_options = 0
+        print("vector_happiness after compromising voting",vector_happiness[index_max])    
     else:
         print("We do not need to improve your happiness.")
         number_of_options = 0
-    print("vector_happiness after compromising voting",vector_happiness[index_max])
-
-
-
+        print("vector_happiness after compromising voting",happiness_scores[voter-1])
 
     #print("AAAA")
     print(preference_matrix_A_acc[index_max][:,voter-1])
@@ -215,7 +215,7 @@ happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplu
 print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
-bullet_list= bullet_voting(preference_matrix, 5, args.scheme)
+bullet_list= bullet_voting(preference_matrix, voter, args.scheme)
 
 if not bullet_list:
     print("List is empty")
