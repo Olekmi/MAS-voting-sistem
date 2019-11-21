@@ -154,14 +154,16 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
         if max_h <= happiness_scores[voter-1]:
             print("We cannot improve your happiness.")
             number_of_options = 0
-        print("vector_happiness after compromising voting",vector_happiness[index_max])    
+        print("vector_happiness after compromising voting",vector_happiness[index_max])
+        print("Outcome=",preference_matrix_A_acc[index_max][:,voter-1])    
     else:
         print("We do not need to improve your happiness.")
         number_of_options = 0
         print("vector_happiness after compromising voting",happiness_scores[voter-1])
+        print("Outcome=",np.array(preference_matrix)[:,voter-1])
 
     #print("AAAA")
-    print(preference_matrix_A_acc[index_max][:,voter-1])
+
     #new_preference_list = preference_matrix_A_acc[index_max][:,voter-1]
     #new_outcome = 
     #return preference_matrix_A_acc[index_max], number_of_options 
