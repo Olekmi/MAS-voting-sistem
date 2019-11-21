@@ -10,9 +10,6 @@ import util
 # import sys
 # sys.stdout = open('stdout.txt', 'w') #to save in an external file
 
-number_of_preferences = 6
-number_of_voters = 8
-voter = 2
 
 def gen_random_preference_matrix(number_of_preferences,number_of_voters):
     preference_matrix = random.sample(range(number_of_preferences),number_of_preferences)
@@ -64,7 +61,6 @@ def bullet_voting(preference_matrix, voter, voting_scheme):
     #print(old_overall_happiness)
     z_hap_dif = new_overall_happiness[voter] - old_overall_happiness[voter]# change that to voter ???
     si_list = [bullet_pref_matrix[:,voter], new_outcome, new_overall_happiness, z_hap_dif]
-    print("z_hap_dif is:", z_hap_dif)
     if z_hap_dif>0:
         #print("AAAAAAAAA")
         number_of_options = 1
@@ -85,9 +81,8 @@ def calculate_outcome(voting_scheme, preference_matrix):
     elif voting_scheme == "borda":
         outcome = vs.borda_calculate_outcome(preference_matrix)
     else:
-        print("voting scheme not recognized, calculating for plurality voting")
-        outcome = vs.borda_calculate_outcome(preference_matrix)
-
+        print("voting scheme not recognized, exiting")
+        quit()
     return outcome
 
 
@@ -96,16 +91,12 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
     outcome = calculate_outcome(voting_scheme, preference_matrix)
 
     happiness_vector = calculate_happiness(preference_matrix, outcome)
-
-    #TODO: calculate properly
+    #si = strategic options
     si_bull, number_of_options_bull = bullet_voting(preference_matrix, voter, voting_scheme)
-    #bullet_outcome = calculate_outcome(voting_scheme, bullet_matrix)
 
     si_comp, number_of_options_comp = Compromising(happiness_vector, preference_matrix, voter, voting_scheme)
 
-    if number_of_options_comp==1:
-        si_comp.append(si_bull)
-        number_of_options_comp +=1
+    si_comp.append(si_bull)
 
     number_of_options =number_of_options_comp
     si = si_comp
@@ -114,61 +105,52 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
 
     #TODO:
     overall_happiness = np.sum(happiness_vector)
-    strategic_options = si[:][0]
+    strategic_options = si[:]
+
+    print("outcome: ", outcome)
+    print("overall happiness: ", overall_happiness)
+    print("risk: ", risk)
+    print("strategic options of the voter: ")
+    for prnt in strategic_options:
+        print(prnt)
+
 
     return outcome, overall_happiness, strategic_options, risk
 
 def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
-    number_of_options = 0
+    #number_of_options = 0
     vector_happiness = []
     new_happiness_score = []
     preference_matrix_A_acc = []
     si =[]
     index_max = 0
-    if happiness_scores[voter] != 1:#because the index starts frm 0
-        print("We will try to improve your happiness.")
-        for j in range(preference_matrix.shape[0]):
-            if j>0: #we do not change the top preference, only an alternative
-                for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
+    for j in range(preference_matrix.shape[0]):
+        if j>0: #we do not change the top preference, only an alternative
+            for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
 
-                    g = preference_matrix.shape[0] - g-1#inversing index
-                    # preference_matrix_A = preference_matrix
-                    preference_matrix_A = np.array(preference_matrix)#CHANGED-put NP array
-                    alternative_A = preference_matrix_A[j][voter]
-                    preference_matrix_A[j][voter] = preference_matrix_A[g][voter]
-                    preference_matrix_A[g][voter] = alternative_A
-                    outcome_A = calculate_outcome(voting_scheme, preference_matrix_A)#Changed
+                g = preference_matrix.shape[0] - g-1#inversing index
+                # preference_matrix_A = preference_matrix
+                preference_matrix_A = np.array(preference_matrix)#CHANGED-put NP array
+                alternative_A = preference_matrix_A[j][voter]
+                preference_matrix_A[j][voter] = preference_matrix_A[g][voter]
+                preference_matrix_A[g][voter] = alternative_A
+                outcome_A = calculate_outcome(voting_scheme, preference_matrix_A)#Changed
 
-                    new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
+                new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
+                
+                z_hap_dif = new_happiness_score[voter]-happiness_scores[voter]
+
+                if z_hap_dif>0:
                     
-                    z_hap_dif = new_happiness_score[voter]-happiness_scores[voter]
-
-                    if z_hap_dif>0:
-                        number_of_options += 1
-                        si_list = [preference_matrix_A[:,voter], outcome_A, new_happiness_score, z_hap_dif]
-                        si.append(si_list)
-                    vector_happiness.append(new_happiness_score[voter])
-                    preference_matrix_A_acc.append(preference_matrix_A)
-        max_h = max(vector_happiness)
-        index_max = vector_happiness.index(max_h)
-        if max_h <= happiness_scores[voter]:
-            print("We cannot improve your happiness.")
-            number_of_options = 0
-        print("vector_happiness after compromising voting",vector_happiness[index_max])
-        print("Outcome=",preference_matrix_A_acc[index_max][:,voter])    
-    else:
-        print("We do not need to improve your happiness.")
-        number_of_options = 0
-        print("vector_happiness after compromising voting",happiness_scores[voter])
-        print("Outcome=",np.array(preference_matrix)[:,voter])
-
-    #print("AAAA")
-
-    #new_preference_list = preference_matrix_A_acc[index_max][:,voter]
-    #new_outcome = 
-    #return preference_matrix_A_acc[index_max], number_of_options 
-    #return new_preference_list, new_outcome, new_overall_happiness, difference in happiness for voter, number_of_options
-    return si, number_of_options
+                    si_list = [preference_matrix_A[:,voter], outcome_A, new_happiness_score, z_hap_dif]
+                    si.append(si_list)
+                vector_happiness.append(new_happiness_score[voter])
+                preference_matrix_A_acc.append(preference_matrix_A)
+    #not needed
+    max_h = max(vector_happiness)
+    index_max = vector_happiness.index(max_h)
+    
+    return si, len(si)
 
 def choose_strategic_voter(preference_matrix,strategic_option):
     for voter in range(number_of_voters):
@@ -183,6 +165,13 @@ def choose_strategic_voter(preference_matrix,strategic_option):
 
 ##-------------------------MAIN------------------------------------
 
+# default
+number_of_preferences = 6
+number_of_voters = 8
+
+voter = 0
+voting_scheme = "borda"
+
 #arguments
 parser = argparse.ArgumentParser(description='choose the voting scheme and the input matrix.')
 parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (plurality, vote2, anti_plurality, borda)')
@@ -195,7 +184,7 @@ if args.pref_matrix_path:
 
     if args.scheme:
         print("Calculating strategic voting for: ", args.scheme, " scheme\n")
-        print(tactical_voter(args.scheme, preference_matrix, voter))
+        tactical_voter(args.scheme, preference_matrix, voter)
         quit()
 else:
     preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
@@ -203,6 +192,7 @@ else:
     print(preference_matrix)
     # preference_matrix_string = matrix_to_string(preference_matrix)
     # print(preference_matrix_string)
+
 
 #HAPPINESS WITH HONEST VOTING
 outcome_borda = vs.borda_calculate_outcome(preference_matrix)
@@ -217,19 +207,16 @@ happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplu
 print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
 #HAPPINESS WITH BULLET VOTING
-bullet_list= bullet_voting(preference_matrix, voter, args.scheme)
+bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)
 
-if not bullet_list:
-    print("List is empty")
-else:
-    print(bullet_list)
+
 #bullet_outcome_borda = borda_calculate_outcome(bullet_matrix) #
 #print(bullet_outcome_borda)
 #happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
 #print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
 
 
-strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter,args.scheme)
+strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter, voting_scheme)
 # risk_honest = risk_calculate(1,number_of_voters)#just let's discuss it over
 risk_compromising = risk_calculate(number_of_options,number_of_voters)
 print(strategy_Compromising)
@@ -237,4 +224,4 @@ print(number_of_options)
 # print("risk honest =",risk_honest)
 print("risk compromising =",risk_compromising)
 
-tactical_voter(args.scheme, preference_matrix, voter)
+# tactical_voter(voting_scheme, preference_matrix, voter)
