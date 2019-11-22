@@ -57,11 +57,9 @@ def bullet_voting(preference_matrix, voter, voting_scheme):
     z_hap_dif = new_overall_happiness[voter] - old_overall_happiness[voter]# change that to voter ???
 #    si_list = [bullet_pref_matrix[:,voter], new_outcome, new_overall_happiness, z_hap_dif]
     z_information = "Bullet voting chosen because the individual happiness was increased by {difference_value:.3f}".format(difference_value = z_hap_dif)
-    si_list = (list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information)
     if z_hap_dif>0:
-        #print("AAAAAAAAA")
         number_of_options = 1
-        si.append(si_list)
+        si = (list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information)
     return si, number_of_options
 
 def risk_calculate(number_of_options,number_of_voters):
@@ -145,6 +143,8 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
 
 #choose strategic voter depending if we want "selfish" or "altruistic" agent
 def choose_strategic_voter(preference_matrix,voting_scheme,behavior):
+    if(behavior != "selfish" and behavior != "altruistic"):
+        return 0
     number_voters = preference_matrix.shape[1]
     options_tuples = []
     list_differences_overall_happiness = []
@@ -175,17 +175,19 @@ def choose_strategic_voter(preference_matrix,voting_scheme,behavior):
         for i in range(len(strategic_options)):
             options_tuples.append([voter_index,strategic_options[i]])
 
+
         for i in range(len(options_tuples) - len(list_differences_overall_happiness)):
-            temp = abs(overall_honnest_happiness - sum(options_tuples[i][1][2]))
-            list_differences_overall_happiness.append(temp)
+            difference_indiv_option_overall = abs(overall_honnest_happiness - options_tuples[i][1][2])
+            list_differences_overall_happiness.append(difference_indiv_option_overall)
 
             individual_happiness_strat_option = re.findall(r'\d+\.\d+', options_tuples[i][1][3])[0]
             list_difference_individual_happiness.append(abs(individual_honnest_happiness - float(individual_happiness_strat_option)))
-            
+    
     if(behavior == "selfish"):
         index_tuple = np.argmax(list_difference_individual_happiness)            
     if(behavior == "altruistic"):
         index_tuple = np.argmax(list_differences_overall_happiness)
+        
 
     strategic_voter_index = options_tuples[index_tuple][0]
     
@@ -272,3 +274,5 @@ print(number_of_options)
 print("risk compromising =",risk_compromising)
 
 tactical_voter(voting_scheme, preference_matrix, voter)
+voter = choose_strategic_voter(preference_matrix,voting_scheme,"altruistic")
+print(voter)
