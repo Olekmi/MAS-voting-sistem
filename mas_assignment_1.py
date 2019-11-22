@@ -126,7 +126,7 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
                 preference_matrix_A[g][voter] = alternative_A
                 outcome_A = calculate_outcome(voting_scheme, preference_matrix_A)#Changed
 
-                new_happiness_score = calculate_happiness(preference_matrix_A, outcome_A)
+                new_happiness_score = calculate_happiness(preference_matrix, outcome_A)
                 
                 z_hap_dif = new_happiness_score[voter]-happiness_scores[voter]
 
@@ -210,6 +210,10 @@ parser = argparse.ArgumentParser(description='choose the voting scheme and the i
 parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (plurality, vote2, anti_plurality, borda)')
 parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference matrix text file path')
 args = parser.parse_args()
+
+#for debbuging only
+# args.pref_matrix_path = "input_preference_matrix_letters.txt"
+# args.scheme = "borda"
 
 if args.pref_matrix_path:
     preference_matrix = util.return_pref_matrix_from_file(args.pref_matrix_path)
