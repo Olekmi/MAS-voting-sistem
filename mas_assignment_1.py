@@ -149,6 +149,7 @@ def choose_strategic_voter(preference_matrix,voting_scheme,behavior):
     options_tuples = []
     list_differences_overall_happiness = []
     list_difference_individual_happiness = []
+    print("num voters",number_voters)
     for voter_index in range(number_voters):
         if voting_scheme == "plurality":
             honnest_outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
@@ -275,4 +276,4 @@ print("risk compromising =",risk_compromising)
 
 tactical_voter(voting_scheme, preference_matrix, voter)
 voter = choose_strategic_voter(preference_matrix,voting_scheme,"altruistic")
-print(voter)
+print("altruistic voter",voter)
