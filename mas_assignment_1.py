@@ -207,16 +207,17 @@ voting_scheme = "borda"
 
 #arguments
 parser = argparse.ArgumentParser(description='choose the voting scheme and the input matrix.')
-parser.add_argument('-s', '--scheme', dest='scheme', help='choose voting scheme: (plurality, vote2, anti_plurality, borda)')
-parser.add_argument('-p', '--pref', dest='pref_matrix_path', help='preference matrix text file path')
+parser.add_argument('-s', '--scheme', dest='scheme', help='Choose voting scheme: (plurality, vote2, anti_plurality, borda)')
+parser.add_argument('-p', '--pref', dest='pref_matrix_file_name', help='preference matrix text file name. Each preference \
+                    should be separated by a comma and the file should not contain an empty space.')
 args = parser.parse_args()
 
 #for debbuging only
 # args.pref_matrix_path = "input_preference_matrix_letters.txt"
 # args.scheme = "borda"
 
-if args.pref_matrix_path:
-    preference_matrix = util.return_pref_matrix_from_file(args.pref_matrix_path)
+if args.pref_matrix_file_name:
+    preference_matrix = util.return_pref_matrix_from_file(args.pref_matrix_file_name)
     print("input preference matrix:\n", preference_matrix)
 
     if args.scheme:
