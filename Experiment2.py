@@ -10,7 +10,7 @@ import re
 import numpy as np
 import voting_schemes as vs
 from mas_assignment_1 import  gen_random_preference_matrix, generate_fixed_pref_matrix, calculate_happiness, tactical_voter
-from mas_assignment_1 import risk_calculate, calculate_outcome, bullet_voting, Compromising
+from mas_assignment_1 import  choose_strategic_voter, risk_calculate, calculate_outcome, bullet_voting, Compromising
 import matplotlib.pyplot as plt
 
 
@@ -94,60 +94,7 @@ average_difference_selfish_total_happiness_antiplurality =  np.zeros(number_of_e
 
 
 
-#choose strategic voter depending if we want "selfish" or "altruistic" agent
-def choose_strategic_voter(preference_matrix,voting_scheme,behavior):
-    if(behavior != "selfish" and behavior != "altruistic"):
-        return 0
-    number_voters = preference_matrix.shape[1]
-    options_tuples = []
-    list_differences_overall_happiness = []
-    list_difference_individual_happiness = []
-    print("num voters",number_voters)
-    for voter_index in range(number_voters):
-        if voting_scheme == "plurality":
-            honnest_outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
-            honnest_overall_happiness_plurality = calculate_happiness(preference_matrix, honnest_outcome_plurality)
-            overall_honnest_happiness = sum(honnest_overall_happiness_plurality)
-            individual_honnest_happiness = honnest_overall_happiness_plurality[voter_index]
-        if voting_scheme == "vote2":
-            honnest_outcome_vote_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
-            honnest_overall_happiness_vote_for_two = calculate_happiness(preference_matrix, honnest_outcome_vote_for_two)
-            overall_honnest_happiness = sum(honnest_overall_happiness_vote_for_two)
-            individual_honnest_happiness = honnest_overall_happiness_vote_for_two[voter_index]
-        if voting_scheme == "anti_plurality":
-            honnest_outcome_anti_plurality = vs.antiplurality_calculate_outcome(preference_matrix)
-            honnest_overall_happiness_anti_plurality = calculate_happiness(preference_matrix, honnest_outcome_anti_plurality)
-            overall_honnest_happiness = sum(honnest_overall_happiness_anti_plurality)
-            individual_honnest_happiness = honnest_overall_happiness_anti_plurality[voter_index]
-        if voting_scheme == "borda":
-            honnest_outcome_borda = vs.borda_calculate_outcome(preference_matrix)
-            honnest_overall_happiness_borda = calculate_happiness(preference_matrix, honnest_outcome_borda)
-            overall_honnest_happiness = sum(honnest_overall_happiness_borda)
-            individual_honnest_happiness = honnest_overall_happiness_borda[voter_index]
 
-        outcome, overall_happiness, strategic_options, risk = tactical_voter(voting_scheme,preference_matrix,voter_index)
-        for i in range(len(strategic_options)):
-            options_tuples.append([voter_index,strategic_options[i]])
-
-        print("num iterations",len(options_tuples) - len(list_differences_overall_happiness))
-        for i in range(len(options_tuples) - len(list_differences_overall_happiness)):
-            difference_indiv_option_overall = abs(overall_honnest_happiness - options_tuples[i][1][2])
-            list_differences_overall_happiness.append(difference_indiv_option_overall)
-
-            individual_happiness_strat_option = re.findall(r'\d+\.\d+', options_tuples[i][1][3])[0]
-            list_difference_individual_happiness.append(abs(individual_honnest_happiness - float(individual_happiness_strat_option)))
-    
-#    print(len(list_difference_individual_happiness))
-#    print(len(list_differences_overall_happiness))
-    if(behavior == "selfish"):
-        index_tuple = np.argmax(list_difference_individual_happiness)            
-    if(behavior == "altruistic"):
-        index_tuple = np.argmax(list_differences_overall_happiness)
-        
-
-    strategic_voter_index = options_tuples[index_tuple][0]
-    
-    return strategic_voter_index
 
 agent_behavior = "selfish"
 
