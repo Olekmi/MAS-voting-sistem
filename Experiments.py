@@ -1,57 +1,68 @@
 import numpy as np
+import operator
+import collections
+import random
+import os.path as op
+import pandas as pd
+import argparse
 import voting_schemes as vs
 import util
 import re
-from mas_assignment_1 import  gen_random_preference_matrix, calculate_happiness ,tactical_voter,Compromising
-from mas_assignment_1 import choose_strategic_voter,  risk_calculate, calculate_outcome, bullet_voting
+from mas_assignment_1 import *
 import matplotlib.pyplot as plt
 
 
 def scheme_risk_assessment(number_of_voters, number_of_experiments):
-    risk_vector_borda = np.zeros((number_of_experiments))
-    risk_vector_plurality =  np.zeros((number_of_experiments))
-    risk_vector_vote2 =  np.zeros((number_of_experiments))
-    risk_vector_antiplurality =  np.zeros((number_of_experiments))
+    risk_matrix_borda = np.zeros((number_of_voters,number_of_experiments))
+    risk_matrix_plurality =  np.zeros((number_of_voters,number_of_experiments))
+    risk_matrix_vote2 =  np.zeros((number_of_voters,number_of_experiments))
+    risk_matrix_antiplurality =  np.zeros((number_of_voters,number_of_experiments))
     for i in range(number_of_experiments):
         preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
-        risk_average_borda = 0
-        risk_average_vote2 = 0
-        risk_average_antiplurality = 0
-        risk_average_plurality = 0
+        #risk_average_borda = 0
+        #risk_average_vote2 = 0
+        #risk_average_antiplurality = 0
+        #risk_average_plurality = 0
         for voter in range(number_of_voters):
-            _, _, _, risk_borda=tactical_voter("borda", preference_matrix, voter)
-            _, _, _, risk_vote2=tactical_voter("vote2", preference_matrix, voter)
-            _, _, _, risk_antiplurality=tactical_voter("anti_plurality", preference_matrix, voter)
-            _, _, _, risk_plurality=tactical_voter("plurality", preference_matrix, voter)
-           # print("AAAAA")
-            #print(risk_borda)
-            risk_average_borda +=risk_borda
-            risk_average_vote2 +=risk_vote2
-            risk_average_antiplurality +=risk_antiplurality
-            risk_average_plurality +=risk_plurality
-        risk_average_borda *= (1/number_of_voters)
-        risk_average_vote2 *= (1/number_of_voters)
-        risk_average_antiplurality *= (1/number_of_voters)
-        risk_average_plurality *= (1/number_of_voters)
+            _, _, _, risk_matrix_borda[voter,i]=tactical_voter("borda", preference_matrix, voter)
+            _, _, _, risk_matrix_vote2[voter,i]=tactical_voter("vote2", preference_matrix, voter)
+            _, _, _, risk_matrix_antiplurality[voter,i]=tactical_voter("anti_plurality", preference_matrix, voter)
+            _, _, _, risk_matrix_plurality[voter,i]=tactical_voter("plurality", preference_matrix, voter)
         
-        risk_vector_borda[i] = risk_average_borda
-        risk_vector_vote2[i] = risk_average_vote2
-        risk_vector_antiplurality[i] = risk_average_antiplurality
-        risk_vector_plurality[i] = risk_average_plurality
     print("Done")
     x_data = np.zeros(number_of_experiments)
     for i in range(number_of_experiments):
         x_data[i] = i
-    plt.plot(x_data, risk_vector_borda)
-    plt.plot(x_data, risk_vector_plurality)
-    plt.plot(x_data, risk_vector_vote2)
-    plt.plot(x_data, risk_vector_antiplurality)
+
+    moving_average_borda = np.zeros(number_of_experiments)
+    moving_average_plurality = np.zeros(number_of_experiments)
+    moving_average_voting_for_two = np.zeros(number_of_experiments)
+    moving_average_antiplurality = np.zeros(number_of_experiments)
+
+    for i in range(number_of_experiments):
+        moving_average_borda[i] = np.average(np.amax(risk_matrix_borda, axis=0)[:i])
+        moving_average_plurality[i] = np.average(np.amax(risk_matrix_plurality, axis=0)[:i])
+        moving_average_voting_for_two[i] = np.average(np.amax(risk_matrix_vote2, axis=0)[:i])
+        moving_average_antiplurality[i] = np.average(np.amax(risk_matrix_antiplurality, axis=0)[:i])
+
+    plt.subplot(221)
+    plt.plot(x_data, moving_average_borda, label="borda")
+    plt.plot(x_data, moving_average_plurality, label="plurality")
+    plt.plot(x_data, moving_average_voting_for_two,label="voting_for_two")
+    plt.plot(x_data, moving_average_antiplurality, label = "antiplurality")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     plt.show()
 
-    print("average borda risk", np.average(risk_vector_borda))
-    print("average plurallity risk",np.average(risk_vector_plurality))
-    print("average voting for two risk",np.average(risk_vector_vote2))
-    print("average antiplurality risk",np.average(risk_vector_antiplurality))
+    #plt.plot(x_data, np.amax(risk_matrix_borda, axis=0))
+    #plt.plot(x_data, np.amax(risk_matrix_plurality, axis=0))
+    #plt.plot(x_data, np.amax(risk_matrix_vote2, axis=0))
+    #plt.plot(x_data, np.amax(risk_matrix_antiplurality, axis=0))
+    #plt.show()
+
+    print("average borda risk", np.average(np.amax(risk_matrix_borda, axis=0)))
+    print("average plurallity risk",np.average(np.amax(risk_matrix_plurality, axis=0)))
+    print("average voting for two risk",np.average(np.amax(risk_matrix_vote2, axis=0)))
+    print("average antiplurality risk",np.average(np.amax(risk_matrix_antiplurality, axis=0)))
 
 
 
@@ -97,14 +108,27 @@ def massive_voting(number_of_experiments):
 #y_voting_for_two = total_happiness_voting_for_two
 #y_antiplurality = total_happiness_antiplurality
 
-    plt.plot(x_data, total_happiness_borda)
-    plt.plot(x_data, total_happiness_plurality)
-    plt.plot(x_data, total_happiness_voting_for_two)
-    plt.plot(x_data, total_happiness_antiplurality)
+    moving_average_borda = np.zeros(number_of_experiments)
+    moving_average_plurality = np.zeros(number_of_experiments)
+    moving_average_voting_for_two = np.zeros(number_of_experiments)
+    moving_average_antiplurality = np.zeros(number_of_experiments)
+
+    for i in range(number_of_experiments):
+        moving_average_borda[i] = np.average(total_happiness_borda[:i])
+        moving_average_plurality[i] = np.average(total_happiness_plurality[:i])
+        moving_average_voting_for_two[i] = np.average(total_happiness_voting_for_two[:i])
+        moving_average_antiplurality[i] = np.average(total_happiness_antiplurality[:i])
+
+    plt.subplot(221)
+    plt.plot(x_data, moving_average_borda, label="borda")
+    plt.plot(x_data, moving_average_plurality, label="plurality")
+    plt.plot(x_data, moving_average_voting_for_two,label="voting_for_two")
+    plt.plot(x_data, moving_average_antiplurality, label = "antiplurality")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     plt.show()
 
     print("average borda happiness", np.average(total_happiness_borda))
-    print("average pplurallity happiness",np.average(total_happiness_plurality))
+    print("average plurallity happiness",np.average(total_happiness_plurality))
     print("average voting for two happiness",np.average(total_happiness_voting_for_two))
     print("average antiplurality happiness",np.average(total_happiness_antiplurality))
 

@@ -54,14 +54,16 @@ def bullet_voting(preference_matrix, voter, voting_scheme):
     old_outcome = calculate_outcome(voting_scheme, preference_matrix)
     new_overall_happiness = calculate_happiness(preference_matrix, new_outcome)
     old_overall_happiness = calculate_happiness(preference_matrix, old_outcome)
-    z_hap_dif = new_overall_happiness[voter] - old_overall_happiness[voter]# change that to voter ???
-#    si_list = [bullet_pref_matrix[:,voter], new_outcome, new_overall_happiness, z_hap_dif]
+    z_hap_dif = new_overall_happiness[voter] - old_overall_happiness[voter]
     z_information = "Bullet voting chosen because the individual happiness was increased by {difference_value:.3f}".format(difference_value = z_hap_dif)
-    si_list = (list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information)
     if z_hap_dif>0:
-        #print("AAAAAAAAA")
         number_of_options = 1
-        si.append(si_list)
+        si.append((list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information))
+    
+    if len(si) == 0:
+       z_information = "We cannot improve happiness."
+       si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_overall_happiness), z_information))
+ 
     return si, number_of_options
 
 def risk_calculate(number_of_options,number_of_voters):
@@ -89,13 +91,13 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
 
     happiness_vector = calculate_happiness(preference_matrix, outcome)
     #si = strategic options
-    si_bull, number_of_options_bull = bullet_voting(preference_matrix, voter, voting_scheme)
+    si_bullet_voting, number_of_options_bull = bullet_voting(preference_matrix, voter, voting_scheme)
     
     
     si_comp, number_of_options_comp = Compromising(happiness_vector, preference_matrix, voter, voting_scheme)
 
-    if len(si_bull)>0:
-        si_comp.append(si_bull)
+    if len(si_bullet_voting)>0:
+        si_comp.append(si_bullet_voting[0])#because si_bullet_voting is a list of tuple. the list is of size 1
 
     number_of_options =number_of_options_comp
     si = si_comp
@@ -108,12 +110,10 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
     return outcome, overall_happiness, strategic_options, risk
 
 def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
-    #number_of_options = 0
     vector_happiness = []
     new_happiness_score = []
     preference_matrix_A_acc = []
     si =[]
-    index_max = 0
     for j in range(preference_matrix.shape[0]):
         if j>0: #we do not change the top preference, only an alternative
             for g in range(preference_matrix.shape[0]-j-1):#we will iterate through options. 2nd will check everything, but 1st. 3rd, all, but 1st and 2nd, etc.
@@ -132,19 +132,21 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
 
                 if z_hap_dif>0:
                     z_information = "Compromising chosen because the individual happiness was increased by {difference_value:.3f}".format(difference_value = z_hap_dif)
-#                    si_list = [preference_matrix_A[:,voter], outcome_A, new_happiness_score, z_information]
                     si_list = (list(preference_matrix_A[:,voter]), outcome_A, np.sum(new_happiness_score), z_information)
                     si.append(si_list)
                 vector_happiness.append(new_happiness_score[voter])
                 preference_matrix_A_acc.append(preference_matrix_A)
-    #not needed
-    max_h = max(vector_happiness)
-    index_max = vector_happiness.index(max_h)
+
+    if len(si) == 0:
+       z_information = "We cannot improve happiness."
+       si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_happiness_score), z_information))
     
     return si, len(si)
 
 #choose strategic voter depending if we want "selfish" or "altruistic" agent
 def choose_strategic_voter(preference_matrix,voting_scheme,behavior):
+    if(behavior != "selfish" and behavior != "altruistic"):
+        return 0 # default voter is the first one if there is an invalid behavior
     number_voters = preference_matrix.shape[1]
     options_tuples = []
     list_differences_overall_happiness = []
@@ -173,23 +175,36 @@ def choose_strategic_voter(preference_matrix,voting_scheme,behavior):
 
         outcome, overall_happiness, strategic_options, risk = tactical_voter(voting_scheme,preference_matrix,voter_index)
         for i in range(len(strategic_options)):
-            options_tuples.append([voter_index,strategic_options[i]])
+            individual_happiness_improvement = re.findall(r'\d+\.\d+', strategic_options[i][3])
+            if(len(individual_happiness_improvement)>0):#checking if valid strategic option
+                options_tuples.append([voter_index,strategic_options[i]])
+
 
         for i in range(len(options_tuples) - len(list_differences_overall_happiness)):
-            temp = abs(overall_honnest_happiness - sum(options_tuples[i][1][2]))
-            list_differences_overall_happiness.append(temp)
-
+            difference_indiv_option_overall = abs(overall_honnest_happiness - options_tuples[i][1][2])
+            list_differences_overall_happiness.append(difference_indiv_option_overall)
+            
             individual_happiness_strat_option = re.findall(r'\d+\.\d+', options_tuples[i][1][3])[0]
             list_difference_individual_happiness.append(abs(individual_honnest_happiness - float(individual_happiness_strat_option)))
-            
-    if(behavior == "selfish"):
-        index_tuple = np.argmax(list_difference_individual_happiness)            
-    if(behavior == "altruistic"):
-        index_tuple = np.argmax(list_differences_overall_happiness)
 
-    strategic_voter_index = options_tuples[index_tuple][0]
-    
-    return strategic_voter_index
+    if(behavior == "selfish"):
+        if len(list_difference_individual_happiness) == 0:
+            strategic_voter_index = np.random.randint(0,number_voters)
+            agent_type = "none"
+        else:
+            index_tuple = np.argmax(list_difference_individual_happiness)
+            strategic_voter_index = options_tuples[index_tuple][0]    
+            agent_type = "selfish"
+    if(behavior == "altruistic"):
+        if len(list_differences_overall_happiness) == 0:
+            strategic_voter_index = np.random.randint(0,number_voters)
+            agent_type = "none"
+        else:  
+            index_tuple = np.argmax(list_differences_overall_happiness)
+            strategic_voter_index = options_tuples[index_tuple][0]
+            agent_type = "altruistic"
+
+    return strategic_voter_index,agent_type
     
                     
 
@@ -258,26 +273,75 @@ if args.scheme:
 
 
 
-#HAPPINESS WITH HONEST VOTING
+#HAPPINESS WITH HONEST VOTING for 
 outcome_borda = vs.borda_calculate_outcome(preference_matrix)
 outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
 outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
 outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
-print(outcome_borda)
+#for an optimised agent
+
 happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
+
 happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
 happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
 happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
+#in overall
+happiness_overall_vector_borda = np.sum(calculate_happiness(preference_matrix, outcome_borda))
+happiness_overall_vector_plurality = np.sum(calculate_happiness(preference_matrix, outcome_plurality))
+happiness_overall_voting_for_two = np.sum(calculate_happiness(preference_matrix, outcome_voting_for_two))
+happiness_overall_antiplurality = np.sum(calculate_happiness(preference_matrix, outcome_antiplurality))
 print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
+#HAPPINESS WITH COMPROMISING VOTING for selfish
+voter_compromising_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","selfish")
+voter_compromising_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","selfish")
+voter_compromising_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","selfish")
+voter_compromising_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","selfish")
+
+happiness_vector_borda_agent = happiness_vector_borda[voter_compromising_borda]
+happiness_vector_plurality_agent = happiness_vector_plurality[voter_compromising_plurality]
+happiness_voting_for_two_agent = happiness_voting_for_two[voter_compromising_voting_for_two]
+happiness_antiplurality_agent = happiness_antiplurality[voter_compromising_anti_plurality]
+
+compromising_plurality, len_si = Compromising(happiness_vector_plurality, preference_matrix, voter_compromising_plurality, "plurality")
+compromising_voting_for_two, len_si = Compromising(happiness_voting_for_two, preference_matrix, voter_compromising_voting_for_two, "vote2")
+compromising_anti_plurality, len_si = Compromising(happiness_antiplurality, preference_matrix, voter_compromising_anti_plurality, "anti_plurality")
+compromising_borda, len_si = Compromising(happiness_vector_borda, preference_matrix, voter_compromising_borda, "borda")
+
+#HAPPINESS WITH COMPROMISING VOTING for altruistic
+voter_compromising_alt_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","altruistic")
+voter_compromising_alt_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","altruistic")
+voter_compromising_alt_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","altruistic")
+voter_compromising_alt_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","altruistic")
+
+compromising_alt_plurality, len_si = Compromising(happiness_vector_plurality, preference_matrix, voter_compromising_alt_plurality, "plurality")
+compromising_alt_voting_for_two, len_si = Compromising(happiness_voting_for_two, preference_matrix, voter_compromising_alt_voting_for_two, "vote2")
+compromising_alt_anti_plurality, len_si = Compromising(happiness_antiplurality, preference_matrix, voter_compromising_alt_anti_plurality, "anti_plurality")
+compromising_alt_borda, len_si = Compromising(happiness_vector_borda, preference_matrix, voter_compromising_alt_borda, "borda")
+
+
+
+#HAPPINESS WITH Bullet VOTING for selfish
+voter_bullet_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","selfish")
+voter_bullet_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","selfish")
+voter_bullet_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","selfish")
+voter_bullet_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","selfish")
+bullet_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_plurality, "plurality")
+bullet_voting_for_two, len_si = bullet_voting(preference_matrix, voter_bullet_voting_for_two, "vote2")
+bullet_anti_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_anti_plurality, "anti_plurality")
+bullet_borda, len_si = bullet_voting(preference_matrix, voter_bullet_borda, "borda")
+
+#HAPPINESS WITH Bullet VOTING for altruistic
+voter_bullet_alt_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","altruistic")
+voter_bullet_alt_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","altruistic")
+voter_bullet_alt_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","altruistic")
+voter_bullet_alt_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","altruistic")
+bullet_alt_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_alt_plurality, "plurality")
+bullet_alt_voting_for_two, len_si = bullet_voting(preference_matrix, voter_bullet_alt_voting_for_two, "vote2")
+bullet_alt_anti_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_alt_anti_plurality, "anti_plurality")
+bullet_alt_borda, len_si = bullet_voting(preference_matrix, voter_bullet_alt_borda, "borda")
 #HAPPINESS WITH BULLET VOTING
 bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)
-
-
-#bullet_outcome_borda = borda_calculate_outcome(bullet_matrix) #
-#print(bullet_outcome_borda)
-#happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
-#print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
 
 
 strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter, voting_scheme)
@@ -289,3 +353,6 @@ print(number_of_options)
 print("risk compromising =",risk_compromising)
 
 tactical_voter(voting_scheme, preference_matrix, voter)
+#for i in range(100):
+voter = choose_strategic_voter(preference_matrix,voting_scheme,"altruistic")
+print("altruistic voter",voter)
