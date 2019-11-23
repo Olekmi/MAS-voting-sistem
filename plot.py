@@ -28,9 +28,9 @@ text_honest_borda = util.join_strings_for_graph(keys_honest_borda,keys_ascii_hon
 
 #----------Happiness for all schemes and all strategies for an agent------------
 colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', max(values_honest_borda)+1, colortype='rgb')
-a = np.array([mas_assignment_1.happiness_vector_plurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
+a = np.array([mas_assignment_1.happiness_vector_plurality[mas_assignment_1.voter_compromising_plurality[0]],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter_compromising_voting_for_two[0]],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter_compromising_anti_plurality[0]],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter_compromising_borda[0]]])
 a_int = a.astype(int)
-b = np.array([mas_assignment_1.compromising_plurality[2],mas_assignment_1.compromising_voting_for_two[2],mas_assignment_1.compromising_anti_plurality[2],mas_assignment_1.compromising_borda[2]])
+b = np.array([mas_assignment_1.compromising_plurality[0][2],mas_assignment_1.compromising_voting_for_two[0][2],mas_assignment_1.compromising_anti_plurality[0][2],mas_assignment_1.compromising_borda[0][2]])
 b_int = a.astype(int)
 
 c = np.random.randint(low=0, high=9, size=4)
@@ -52,7 +52,7 @@ fig = go.Figure(data=[go.Table(
 
 fig.update_layout(
     title={
-        'text': "Happiness score",
+        'text': "Happiness score for optimized selfish agent",
         'y':0.9,
         'x':0.62,
         'xanchor': 'center',

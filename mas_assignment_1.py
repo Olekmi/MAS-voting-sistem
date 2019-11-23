@@ -264,12 +264,15 @@ happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplu
 print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
 #HAPPINESS WITH COMPROMISING VOTING for selfish
-# voter_compromising_plurality = choose_strategic_voter(preference_matrix,"plurality","selfish")
+voter_compromising_plurality = choose_strategic_voter(preference_matrix,"plurality","selfish")
+voter_compromising_voting_for_two = choose_strategic_voter(preference_matrix,"vote2","selfish")
+voter_compromising_anti_plurality = choose_strategic_voter(preference_matrix,"anti_plurality","selfish")
+voter_compromising_borda = choose_strategic_voter(preference_matrix,"borda","selfish")
 compromising_plurality, len_si = Compromising(happiness_scoress, preference_matrix, 0, "plurality")
 compromising_voting_for_two, len_si = Compromising(happiness_scoress, preference_matrix, 0, "vote2")
 compromising_anti_plurality, len_si = Compromising(happiness_scoress, preference_matrix, 0, "anti_plurality")
 compromising_borda, len_si = Compromising(happiness_scoress, preference_matrix, 0, "borda")
-
+olek= compromising_borda[0][2]
 #HAPPINESS WITH BULLET VOTING
 bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)
 
