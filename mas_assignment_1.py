@@ -138,6 +138,10 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
     #not needed
     max_h = max(vector_happiness)
     index_max = vector_happiness.index(max_h)
+
+    if len(si) == 0:
+       z_information = "We cannot improve happiness."
+       si = (list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_happiness_score), z_information)
     
     return si, len(si)
 
@@ -251,12 +255,28 @@ outcome_borda = vs.borda_calculate_outcome(preference_matrix)
 outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
 outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
 outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
-print(outcome_borda)
+happiness_scoress = calculate_happiness(preference_matrix,outcome_plurality)
 happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
 happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
 happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
 happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
 print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
+
+#HAPPINESS WITH COMPROMISING VOTING
+# voter_compromising_plurality = choose_strategic_voter(preference_matrix,"plurality","selfish")
+outcome_compromising_plurality, len_si = Compromising(happiness_scoress, preference_matrix, 0, "plurality")
+happ_comp_pl = outcome_compromising_plurality[2]
+# happiness_vector_compromising_plurality = 
+# outcome_borda = vs.borda_calculate_outcome(preference_matrix)
+# outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
+# outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
+# outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
+
+# happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
+# happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
+# happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
+# happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
+
 
 #HAPPINESS WITH BULLET VOTING
 bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)

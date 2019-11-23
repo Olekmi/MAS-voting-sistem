@@ -28,10 +28,11 @@ text_honest_borda = util.join_strings_for_graph(keys_honest_borda,keys_ascii_hon
 
 #----------Happiness for all schemes and all strategies for an agent------------
 colors = n_colors('rgb(255, 200, 200)', 'rgb(200, 0, 0)', max(values_honest_borda)+1, colortype='rgb')
-a = np.array([mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
+a = np.array([mas_assignment_1.happiness_vector_plurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
 a_int = a.astype(int)
+b = np.array([mas_assignment_1.outcome_compromising_plurality[2],mas_assignment_1.happiness_voting_for_two[mas_assignment_1.voter-1],mas_assignment_1.happiness_antiplurality[mas_assignment_1.voter-1],mas_assignment_1.happiness_vector_borda[mas_assignment_1.voter-1]])
+b_int = a.astype(int)
 
-b = np.random.randint(low=0, high=9, size=4)
 c = np.random.randint(low=0, high=9, size=4)
 d = ['<b>Plurality<b>', '<b>Voting for two<b>', '<b>Antiplurality<b>', '<b>Borda<b>']
 
@@ -43,8 +44,8 @@ fig = go.Figure(data=[go.Table(
   ),
   cells=dict(
     values=[d, a, b, c],
-    line_color=['white',np.array(colors)[a_int],np.array(colors)[b], np.array(colors)[c]],
-    fill_color=['white',np.array(colors)[a_int],np.array(colors)[b], np.array(colors)[c]],
+    line_color=['white',np.array(colors)[a_int],np.array(colors)[b_int], np.array(colors)[c]],
+    fill_color=['white',np.array(colors)[a_int],np.array(colors)[b_int], np.array(colors)[c]],
     align='center', font=dict(color='black', size=12)
     ))
 ])
