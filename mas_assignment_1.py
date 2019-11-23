@@ -210,6 +210,8 @@ parser = argparse.ArgumentParser(description='choose the voting scheme and the i
 parser.add_argument('-s', '--scheme', dest='scheme', help='Choose voting scheme: (plurality, vote2, anti_plurality, borda)')
 parser.add_argument('-p', '--pref', dest='pref_matrix_file_name', help='preference matrix text file name. Each preference \
                     should be separated by a comma and the file should not contain an empty space.')
+parser.add_argument('-v', '--voter', dest='voter', help='Choose the index of the voter, that strategic voting will be calculater for. ')
+parser.add_argument('-b', '--behavior', dest='behavior', help='If a voter is not selected you can choose the behavor of a voter(selfish, altruistic). The voter with the most fitting result for this behavior will be selected.')
 args = parser.parse_args()
 
 #for debbuging only
@@ -220,23 +222,38 @@ if args.pref_matrix_file_name:
     preference_matrix = util.return_pref_matrix_from_file(args.pref_matrix_file_name)
     print("input preference matrix:\n", preference_matrix)
 
-    if args.scheme:
-        print("Calculating strategic voting for: ", args.scheme, " scheme\n")
-        outcome, overall_happiness, strategic_options, risk = tactical_voter(args.scheme, preference_matrix, voter)
-
-        print("outcome: ", outcome)
-        print("overall happiness: ", overall_happiness)
-        print("risk: ", risk)
-        print("strategic options of the voter: ")
-        for prnt in strategic_options:
-            print(prnt)
-        quit()
 else:
     preference_matrix = gen_random_preference_matrix(number_of_preferences,number_of_voters)
     # preference_matrix = generate_fixed_pref_matrix(number_of_preferences,number_of_voters)
     print(preference_matrix)
     # preference_matrix_string = matrix_to_string(preference_matrix)
     # print(preference_matrix_string)
+
+if args.voter:
+    voter =  int(args.voter)
+
+if args.scheme:
+
+    if args.behavior:
+        if args.behavior =="altruistic" or args.behavior == "selfish":
+            print("selecting the most ", args.behavior, " voter\n")
+            voter, agent_type = choose_strategic_voter(preference_matrix, args.scheme,args.behavior)
+        else:
+            print("wrong value for behavior, exiting")
+            quit()
+            
+
+    print("Calculating strategic voting for: ", args.scheme, " scheme\n")
+    outcome, overall_happiness, strategic_options, risk = tactical_voter(args.scheme, preference_matrix, voter)
+
+    print("outcome: ", outcome)
+    print("overall happiness: ", overall_happiness)
+    print("risk: ", risk)
+    print("strategic options of the voter: ")
+    for prnt in strategic_options:
+        print(prnt)
+    quit()
+
 
 
 
