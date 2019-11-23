@@ -251,8 +251,8 @@ if args.scheme:
 
     if args.behavior:
         if args.behavior =="altruistic" or args.behavior == "selfish":
-            print("selecting the most ", args.behavior, " voter\n")
             voter, agent_type = choose_strategic_voter(preference_matrix, args.scheme,args.behavior)
+            print("selecting the most ", args.behavior, " voter: ", voter, "\n")
         else:
             print("wrong value for behavior, exiting")
             quit()
@@ -261,10 +261,10 @@ if args.scheme:
     print("Calculating strategic voting for: ", args.scheme, " scheme\n")
     outcome, overall_happiness, strategic_options, risk = tactical_voter(args.scheme, preference_matrix, voter)
 
-    print("outcome: ", outcome)
-    print("overall happiness: ", overall_happiness)
+    print("original outcome: ", outcome)
+    print("overall happiness of honest voting: ", overall_happiness)
     print("risk: ", risk)
-    print("strategic options of the voter: ")
+    print("strategic options of the ", voter ," voter: ")
     for prnt in strategic_options:
         print(prnt)
     quit()
