@@ -59,6 +59,11 @@ def bullet_voting(preference_matrix, voter, voting_scheme):
     if z_hap_dif>0:
         number_of_options = 1
         si.append((list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information))
+    
+    if len(si) == 0:
+       z_information = "We cannot improve happiness."
+       si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_overall_happiness), z_information))
+ 
     return si, number_of_options
 
 def risk_calculate(number_of_options,number_of_voters):
@@ -251,36 +256,75 @@ else:
 
 
 
-#HAPPINESS WITH HONEST VOTING
+#HAPPINESS WITH HONEST VOTING for 
 outcome_borda = vs.borda_calculate_outcome(preference_matrix)
 outcome_plurality = vs.plurality_calculate_outcome(preference_matrix)
 outcome_voting_for_two = vs.voting_for_two_calculate_outcome(preference_matrix)
 outcome_antiplurality = vs.antiplurality_calculate_outcome(preference_matrix)
-happiness_scoress = calculate_happiness(preference_matrix,outcome_plurality)
+#for an optimised agent
+
 happiness_vector_borda = calculate_happiness(preference_matrix, outcome_borda)
+
 happiness_vector_plurality = calculate_happiness(preference_matrix, outcome_plurality)
 happiness_voting_for_two = calculate_happiness(preference_matrix, outcome_voting_for_two)
 happiness_antiplurality = calculate_happiness(preference_matrix, outcome_antiplurality)
+#in overall
+happiness_overall_vector_borda = np.sum(calculate_happiness(preference_matrix, outcome_borda))
+happiness_overall_vector_plurality = np.sum(calculate_happiness(preference_matrix, outcome_plurality))
+happiness_overall_voting_for_two = np.sum(calculate_happiness(preference_matrix, outcome_voting_for_two))
+happiness_overall_antiplurality = np.sum(calculate_happiness(preference_matrix, outcome_antiplurality))
 print("HAPPINESS:\n", np.vstack(happiness_vector_borda), "\n\n")
 
 #HAPPINESS WITH COMPROMISING VOTING for selfish
-voter_compromising_plurality = choose_strategic_voter(preference_matrix,"plurality","selfish")
-voter_compromising_voting_for_two = choose_strategic_voter(preference_matrix,"vote2","selfish")
-voter_compromising_anti_plurality = choose_strategic_voter(preference_matrix,"anti_plurality","selfish")
-voter_compromising_borda = choose_strategic_voter(preference_matrix,"borda","selfish")
-compromising_plurality, len_si = Compromising(happiness_scoress, preference_matrix, 0, "plurality")
-compromising_voting_for_two, len_si = Compromising(happiness_scoress, preference_matrix, 0, "vote2")
-compromising_anti_plurality, len_si = Compromising(happiness_scoress, preference_matrix, 0, "anti_plurality")
-compromising_borda, len_si = Compromising(happiness_scoress, preference_matrix, 0, "borda")
-olek= compromising_borda[0][2]
+voter_compromising_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","selfish")
+voter_compromising_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","selfish")
+voter_compromising_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","selfish")
+voter_compromising_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","selfish")
+
+happiness_vector_borda_agent = happiness_vector_borda[voter_compromising_borda]
+happiness_vector_plurality_agent = happiness_vector_plurality[voter_compromising_plurality]
+happiness_voting_for_two_agent = happiness_voting_for_two[voter_compromising_voting_for_two]
+happiness_antiplurality_agent = happiness_antiplurality[voter_compromising_anti_plurality]
+
+compromising_plurality, len_si = Compromising(happiness_vector_plurality, preference_matrix, voter_compromising_plurality, "plurality")
+compromising_voting_for_two, len_si = Compromising(happiness_voting_for_two, preference_matrix, voter_compromising_voting_for_two, "vote2")
+compromising_anti_plurality, len_si = Compromising(happiness_antiplurality, preference_matrix, voter_compromising_anti_plurality, "anti_plurality")
+compromising_borda, len_si = Compromising(happiness_vector_borda, preference_matrix, voter_compromising_borda, "borda")
+
+#HAPPINESS WITH COMPROMISING VOTING for altruistic
+voter_compromising_alt_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","altruistic")
+voter_compromising_alt_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","altruistic")
+voter_compromising_alt_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","altruistic")
+voter_compromising_alt_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","altruistic")
+
+compromising_alt_plurality, len_si = Compromising(happiness_vector_plurality, preference_matrix, voter_compromising_alt_plurality, "plurality")
+compromising_alt_voting_for_two, len_si = Compromising(happiness_voting_for_two, preference_matrix, voter_compromising_alt_voting_for_two, "vote2")
+compromising_alt_anti_plurality, len_si = Compromising(happiness_antiplurality, preference_matrix, voter_compromising_alt_anti_plurality, "anti_plurality")
+compromising_alt_borda, len_si = Compromising(happiness_vector_borda, preference_matrix, voter_compromising_alt_borda, "borda")
+
+
+
+#HAPPINESS WITH Bullet VOTING for selfish
+voter_bullet_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","selfish")
+voter_bullet_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","selfish")
+voter_bullet_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","selfish")
+voter_bullet_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","selfish")
+bullet_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_plurality, "plurality")
+bullet_voting_for_two, len_si = bullet_voting(preference_matrix, voter_bullet_voting_for_two, "vote2")
+bullet_anti_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_anti_plurality, "anti_plurality")
+bullet_borda, len_si = bullet_voting(preference_matrix, voter_bullet_borda, "borda")
+
+#HAPPINESS WITH Bullet VOTING for altruistic
+voter_bullet_alt_plurality,agent_type = choose_strategic_voter(preference_matrix,"plurality","altruistic")
+voter_bullet_alt_voting_for_two,agent_type = choose_strategic_voter(preference_matrix,"vote2","altruistic")
+voter_bullet_alt_anti_plurality,agent_type = choose_strategic_voter(preference_matrix,"anti_plurality","altruistic")
+voter_bullet_alt_borda,agent_type = choose_strategic_voter(preference_matrix,"borda","altruistic")
+bullet_alt_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_alt_plurality, "plurality")
+bullet_alt_voting_for_two, len_si = bullet_voting(preference_matrix, voter_bullet_alt_voting_for_two, "vote2")
+bullet_alt_anti_plurality, len_si = bullet_voting(preference_matrix, voter_bullet_alt_anti_plurality, "anti_plurality")
+bullet_alt_borda, len_si = bullet_voting(preference_matrix, voter_bullet_alt_borda, "borda")
 #HAPPINESS WITH BULLET VOTING
 bullet_list, number_of_options_bullet= bullet_voting(preference_matrix, voter, voting_scheme)
-
-
-#bullet_outcome_borda = borda_calculate_outcome(bullet_matrix) #
-#print(bullet_outcome_borda)
-#happiness_vector_bullet_borda = calculate_happiness(preference_matrix, bullet_outcome_borda)
-#print("HAPPINESS BULLET:\n", np.vstack(happiness_vector_bullet_borda), "\n\n")
 
 
 strategy_Compromising, number_of_options = Compromising(happiness_vector_borda, preference_matrix, voter, voting_scheme)
