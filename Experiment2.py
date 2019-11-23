@@ -102,26 +102,26 @@ for i in range(number_of_experiments):
     random_preference_half = gen_random_preference_matrix(number_of_preferences,int(0.5*number_of_voters))
     preference_matrix = np.append(same_preference_half,random_preference_half,axis=1)
     
-    borda_tactical_voter_index = choose_strategic_voter(preference_matrix,"borda",agent_behavior)
+    borda_tactical_voter_index = choose_strategic_voter(preference_matrix,"borda",agent_behavior)[0]
     _, overall_happiness_borda, _, _ = tactical_voter("borda",preference_matrix,borda_tactical_voter_index)
     selfish_total_happiness_borda[i] = overall_happiness_borda
     difference_selfish_total_happiness_borda[i] = overall_happiness_borda - total_happiness_borda[i]
     average_difference_selfish_total_happiness_borda[i] = overall_happiness_borda - np.average(total_happiness_borda)
     
     
-    vote_two_tactical_voter_index = choose_strategic_voter(preference_matrix,"vote2",agent_behavior)
+    vote_two_tactical_voter_index = choose_strategic_voter(preference_matrix,"vote2",agent_behavior)[0]
     _, overall_happiness_vote_two, _, _ = tactical_voter("vote2",preference_matrix,borda_tactical_voter_index)
     selfish_total_happiness_voting_for_two[i] = overall_happiness_vote_two
     difference_selfish_total_happiness_voting_for_two[i] = overall_happiness_vote_two - total_happiness_voting_for_two[i]
     average_difference_selfish_total_happiness_voting_for_two = overall_happiness_vote_two - np.average(total_happiness_voting_for_two)
     
-    antiplurality_tactical_voter_index = choose_strategic_voter(preference_matrix,"anti_plurality",agent_behavior)
+    antiplurality_tactical_voter_index = choose_strategic_voter(preference_matrix,"anti_plurality",agent_behavior)[0]
     _, overall_happiness_antiplurality, _, _ = tactical_voter("anti_plurality",preference_matrix,borda_tactical_voter_index)
     selfish_total_happiness_antiplurality[i] = overall_happiness_antiplurality
     difference_selfish_total_happiness_plurality[i] = overall_happiness_antiplurality - total_happiness_antiplurality[i]
     average_difference_selfish_total_happiness_antiplurality = overall_happiness_antiplurality - np.average(total_happiness_antiplurality)
     
-    plurality_tactical_voter_index = choose_strategic_voter(preference_matrix,"plurality",agent_behavior)
+    plurality_tactical_voter_index = choose_strategic_voter(preference_matrix,"plurality",agent_behavior)[0]
     _, overall_happiness_plurality, _, _ = tactical_voter("plurality",preference_matrix,borda_tactical_voter_index)
     selfish_total_happiness_plurality[i] = overall_happiness_plurality
     difference_selfish_total_happiness_plurality[i] = overall_happiness_plurality - total_happiness_plurality[i]
