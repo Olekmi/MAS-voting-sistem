@@ -39,11 +39,20 @@ def scheme_risk_assessment(number_of_voters, number_of_experiments):
     moving_average_voting_for_two = np.zeros(number_of_experiments)
     moving_average_antiplurality = np.zeros(number_of_experiments)
 
+    mov_avg_window = int(number_of_experiments/10)
     for i in range(number_of_experiments):
-        moving_average_borda[i] = np.average(np.amax(risk_matrix_borda, axis=0)[:i])
-        moving_average_plurality[i] = np.average(np.amax(risk_matrix_plurality, axis=0)[:i])
-        moving_average_voting_for_two[i] = np.average(np.amax(risk_matrix_vote2, axis=0)[:i])
-        moving_average_antiplurality[i] = np.average(np.amax(risk_matrix_antiplurality, axis=0)[:i])
+
+        if i<=mov_avg_window:
+            moving_average_borda[i] = np.average(np.amax(risk_matrix_borda, axis=0)[:i])
+            moving_average_plurality[i] = np.average(np.amax(risk_matrix_plurality, axis=0)[:i])
+            moving_average_voting_for_two[i] = np.average(np.amax(risk_matrix_vote2, axis=0)[:i])
+            moving_average_antiplurality[i] = np.average(np.amax(risk_matrix_antiplurality, axis=0)[:i])
+        else:
+            moving_average_borda[i] = np.average(np.amax(risk_matrix_borda, axis=0)[(i-mov_avg_window):i])
+            moving_average_plurality[i] = np.average(np.amax(risk_matrix_plurality, axis=0)[(i-mov_avg_window):i])
+            moving_average_voting_for_two[i] = np.average(np.amax(risk_matrix_vote2, axis=0)[(i-mov_avg_window):i])
+            moving_average_antiplurality[i] = np.average(np.amax(risk_matrix_antiplurality, axis=0)[(i-mov_avg_window):i])            
+
 
     plt.subplot(221)
     plt.plot(x_data, moving_average_borda, label="borda")
@@ -113,17 +122,28 @@ def massive_voting(number_of_experiments):
     moving_average_voting_for_two = np.zeros(number_of_experiments)
     moving_average_antiplurality = np.zeros(number_of_experiments)
 
+    mov_avg_window = int(number_of_experiments/10)
     for i in range(number_of_experiments):
-        moving_average_borda[i] = np.average(total_happiness_borda[:i])
-        moving_average_plurality[i] = np.average(total_happiness_plurality[:i])
-        moving_average_voting_for_two[i] = np.average(total_happiness_voting_for_two[:i])
-        moving_average_antiplurality[i] = np.average(total_happiness_antiplurality[:i])
+        if i<=mov_avg_window:
+            moving_average_borda[i] = np.average(total_happiness_borda[:i])
+            moving_average_plurality[i] = np.average(total_happiness_plurality[:i])
+            moving_average_voting_for_two[i] = np.average(total_happiness_voting_for_two[:i])
+            moving_average_antiplurality[i] = np.average(total_happiness_antiplurality[:i])
+        else:
+            moving_average_borda[i] = np.average(total_happiness_borda[(i-mov_avg_window):i])
+            moving_average_plurality[i] = np.average(total_happiness_plurality[(i-mov_avg_window):i])
+            moving_average_voting_for_two[i] = np.average(total_happiness_voting_for_two[(i-mov_avg_window):i])
+            moving_average_antiplurality[i] = np.average(total_happiness_antiplurality[(i-mov_avg_window):i])
 
     plt.subplot(221)
     plt.plot(x_data, moving_average_borda, label="borda")
     plt.plot(x_data, moving_average_plurality, label="plurality")
     plt.plot(x_data, moving_average_voting_for_two,label="voting_for_two")
     plt.plot(x_data, moving_average_antiplurality, label = "antiplurality")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+    plt.show()
+    plt.subplot(221)
+    _ = plt.hist(total_happiness_borda - total_happiness_plurality, bins=100,range = (-2,2),label = "borda minus plurality")
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     plt.show()
 
@@ -142,12 +162,12 @@ def massive_voting(number_of_experiments):
 
 number_of_preferences = 5
 number_of_voters = 10
-number_of_experiments = 100
+number_of_experiments = 1000
 
 
 
 
 voter = 0
 
-#massive_voting(number_of_experiments)
-scheme_risk_assessment(number_of_voters, number_of_experiments)
+massive_voting(number_of_experiments)
+#scheme_risk_assessment(number_of_voters, number_of_experiments)
