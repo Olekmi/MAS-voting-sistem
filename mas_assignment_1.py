@@ -60,9 +60,9 @@ def bullet_voting(preference_matrix, voter, voting_scheme):
         number_of_options = 1
         si.append((list(bullet_pref_matrix[:,voter]), new_outcome, np.sum(new_overall_happiness), z_information))
     
-    if len(si) == 0:
-       z_information = "We cannot improve happiness."
-       si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_overall_happiness), z_information))
+    # if len(si) == 0:
+    #    z_information = "We cannot improve happiness."
+    #    si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_overall_happiness), z_information))
  
     return si, number_of_options
 
@@ -137,9 +137,9 @@ def Compromising(happiness_scores, preference_matrix, voter, voting_scheme):
                 vector_happiness.append(new_happiness_score[voter])
                 preference_matrix_A_acc.append(preference_matrix_A)
 
-    if len(si) == 0:
-       z_information = "We cannot improve happiness."
-       si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_happiness_score), z_information))
+    # if len(si) == 0:
+    #    z_information = "We cannot improve happiness."
+    #    si.append((list(preference_matrix[:,voter]), calculate_outcome(voting_scheme, preference_matrix), np.sum(new_happiness_score), z_information))
     
     return si, len(si)
 
@@ -225,8 +225,8 @@ parser = argparse.ArgumentParser(description='choose the voting scheme and the i
 parser.add_argument('-s', '--scheme', dest='scheme', help='Choose voting scheme: (plurality, vote2, anti_plurality, borda)')
 parser.add_argument('-p', '--pref', dest='pref_matrix_file_name', help='preference matrix text file name. Each preference \
                     should be separated by a comma and the file should not contain an empty space.')
-parser.add_argument('-v', '--voter', dest='voter', help='Choose the index of the voter, that strategic voting will be calculater for. ')
-parser.add_argument('-b', '--behavior', dest='behavior', help='If a voter is not selected you can choose the behavor of a voter(selfish, altruistic). The voter with the most fitting result for this behavior will be selected.')
+parser.add_argument('-v', '--voter', dest='voter', help='Choose the index of the voter, that strategic voting will be calculated for. ')
+parser.add_argument('-b', '--behavior', dest='behavior', help='If a voter is not selected you can choose the behavior of a voter(selfish, altruistic). The voter with the most fitting result for this behavior will be selected.')
 args = parser.parse_args()
 
 #for debbuging only
@@ -265,8 +265,11 @@ if args.scheme:
     print("overall happiness of honest voting: ", overall_happiness)
     print("risk: ", risk)
     print("strategic options of the ", voter ," voter: ")
-    for prnt in strategic_options:
-        print(prnt)
+    if strategic_options == []:
+        print("No options for this voter")
+    else:
+        for prnt in strategic_options:
+            print(prnt)
     quit()
 
 
