@@ -55,6 +55,8 @@ def scheme_risk_assessment(number_of_voters, number_of_experiments):
 
 
     plt.subplot(221)
+    plt.xlabel('number_of_experiments')
+    plt.ylabel('risk')
     plt.plot(x_data, moving_average_borda, label="borda")
     plt.plot(x_data, moving_average_plurality, label="plurality")
     plt.plot(x_data, moving_average_voting_for_two,label="voting_for_two")
@@ -141,10 +143,14 @@ def massive_voting(number_of_experiments):
     plt.plot(x_data, moving_average_voting_for_two,label="voting_for_two")
     plt.plot(x_data, moving_average_antiplurality, label = "antiplurality")
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+    plt.xlabel('number_of_experiments')
+    plt.ylabel('happiness')
     plt.show()
     plt.subplot(221)
     _ = plt.hist(total_happiness_borda - total_happiness_plurality, bins=100,range = (-2,2),label = "borda minus plurality")
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+    plt.xlabel('happiness difference')
+    plt.ylabel('number of instances')
     plt.show()
 
     print("average borda happiness", np.average(total_happiness_borda))
@@ -167,7 +173,7 @@ number_of_experiments = 1000
 
 
 
-voter = 0
+#voter = 0
 
 massive_voting(number_of_experiments)
-#scheme_risk_assessment(number_of_voters, number_of_experiments)
+scheme_risk_assessment(number_of_voters, number_of_experiments)
