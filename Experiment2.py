@@ -18,7 +18,7 @@ import math
 
 number_of_preferences = 5
 number_of_voters = 10
-number_of_experiments = 1000
+number_of_experiments = 100
 same_preference_half = generate_fixed_pref_matrix(number_of_preferences,0.5*number_of_voters)
 
 
@@ -181,8 +181,8 @@ def experiment_selfish_agent():
     x_diff_selfish_total_happiness_antiplurality = np.linspace(mu_diff_selfish_total_happiness_antiplurality - 3* sigma_diff_selfish_total_happiness_antiplurality, mu_diff_selfish_total_happiness_antiplurality + 3*sigma_diff_selfish_total_happiness_antiplurality, number_of_experiments)
 
 
-    plt.figure(figsize=(8,20))
-    plt.subplot(2, 1, 1)
+    plt.figure(figsize=(10,10))
+#    plt.subplot(2, 1, 1)
     plt.plot(x_diff_selfish_total_happiness_borda, stats.norm.pdf(x_diff_selfish_total_happiness_borda, mu_diff_selfish_total_happiness_borda, sigma_diff_selfish_total_happiness_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_selfish_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_selfish_total_happiness_borda))
     plt.plot(x_diff_selfish_total_happiness_plurality, stats.norm.pdf(x_diff_selfish_total_happiness_plurality, mu_diff_selfish_total_happiness_plurality, sigma_diff_selfish_total_happiness_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_selfish_total_happiness_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_selfish_total_happiness_plurality))
     plt.plot(x_diff_selfish_total_happiness_voting_for_two, stats.norm.pdf(x_diff_selfish_total_happiness_voting_for_two, mu_diff_selfish_total_happiness_voting_for_two, sigma_diff_selfish_total_happiness_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_selfish_total_happiness_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_selfish_total_happiness_voting_for_two))
@@ -196,7 +196,7 @@ def experiment_selfish_agent():
 #    
 #    
 #    
-    plt.subplot(2,1,2)    
+#    plt.subplot(2,1,2)    
     mu_avg_diff_selfish_tot_borda = np.average(average_difference_selfish_total_happiness_borda)
     var_avg_diff_selfish_tot_borda = np.var(average_difference_selfish_total_happiness_borda)
     sigma_avg_diff_selfish_tot_borda = math.sqrt(var_avg_diff_selfish_tot_borda)
@@ -218,15 +218,15 @@ def experiment_selfish_agent():
     x_avg_diff_selfish_tot_antiplurality = np.linspace(mu_avg_diff_selfish_tot_antiplurality - 3* sigma_avg_diff_selfish_tot_antiplurality, mu_avg_diff_selfish_tot_antiplurality + 3*sigma_avg_diff_selfish_tot_antiplurality, number_of_experiments)
     
     
-    plt.plot(x_avg_diff_selfish_tot_borda, stats.norm.pdf(x_avg_diff_selfish_tot_borda, mu_avg_diff_selfish_tot_borda, sigma_avg_diff_selfish_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_selfish_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_borda))
-    plt.plot(x_avg_diff_selfish_tot_plurality, stats.norm.pdf(x_avg_diff_selfish_tot_plurality, mu_avg_diff_selfish_tot_plurality, sigma_avg_diff_selfish_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_selfish_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_plurality))
-    plt.plot(x_avg_diff_selfish_tot_voting_for_two, stats.norm.pdf(x_avg_diff_selfish_tot_voting_for_two, mu_avg_diff_selfish_tot_voting_for_two, sigma_avg_diff_selfish_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_selfish_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_voting_for_two))
-    plt.plot(x_avg_diff_selfish_tot_antiplurality, stats.norm.pdf(x_avg_diff_selfish_tot_antiplurality, mu_avg_diff_selfish_tot_antiplurality, sigma_avg_diff_selfish_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_selfish_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_antiplurality))
-    
-    plt.legend(fontsize='small')
-    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is a selfish agent")
-    plt.xlabel("Change in the difference from the average honest happiness")
-    plt.ylabel("Probability of the change from the average honest happiness")
+#    plt.plot(x_avg_diff_selfish_tot_borda, stats.norm.pdf(x_avg_diff_selfish_tot_borda, mu_avg_diff_selfish_tot_borda, sigma_avg_diff_selfish_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_selfish_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_borda))
+#    plt.plot(x_avg_diff_selfish_tot_plurality, stats.norm.pdf(x_avg_diff_selfish_tot_plurality, mu_avg_diff_selfish_tot_plurality, sigma_avg_diff_selfish_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_selfish_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_plurality))
+#    plt.plot(x_avg_diff_selfish_tot_voting_for_two, stats.norm.pdf(x_avg_diff_selfish_tot_voting_for_two, mu_avg_diff_selfish_tot_voting_for_two, sigma_avg_diff_selfish_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_selfish_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_voting_for_two))
+#    plt.plot(x_avg_diff_selfish_tot_antiplurality, stats.norm.pdf(x_avg_diff_selfish_tot_antiplurality, mu_avg_diff_selfish_tot_antiplurality, sigma_avg_diff_selfish_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_selfish_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_selfish_tot_antiplurality))
+#    
+#    plt.legend(fontsize='small')
+#    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is a selfish agent")
+#    plt.xlabel("Change in the difference from the average honest happiness")
+#    plt.ylabel("Probability of the change from the average honest happiness")
     plt.savefig("selfish_exp2_"+str(number_of_experiments)+".jpg")
     plt.show()
         
@@ -367,8 +367,8 @@ def experiment_altruistic_agent():
     x_diff_altruistic_total_happiness_antiplurality = np.linspace(mu_diff_altruistic_total_happiness_antiplurality - 3* sigma_diff_altruistic_total_happiness_antiplurality, mu_diff_altruistic_total_happiness_antiplurality + 3*sigma_diff_altruistic_total_happiness_antiplurality, number_of_experiments)
 
 
-    plt.figure(figsize=(8,20))
-    plt.subplot(2, 1, 1)
+    plt.figure(figsize=(10,10))
+#    plt.subplot(2, 1, 1)
     plt.plot(x_diff_altruistic_total_happiness_borda, stats.norm.pdf(x_diff_altruistic_total_happiness_borda, mu_diff_altruistic_total_happiness_borda, sigma_diff_altruistic_total_happiness_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_altruistic_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_altruistic_total_happiness_borda))
     plt.plot(x_diff_altruistic_total_happiness_plurality, stats.norm.pdf(x_diff_altruistic_total_happiness_plurality, mu_diff_altruistic_total_happiness_plurality, sigma_diff_altruistic_total_happiness_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_altruistic_total_happiness_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_altruistic_total_happiness_plurality))
     plt.plot(x_diff_altruistic_total_happiness_voting_for_two, stats.norm.pdf(x_diff_altruistic_total_happiness_voting_for_two, mu_diff_altruistic_total_happiness_voting_for_two, sigma_diff_altruistic_total_happiness_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_altruistic_total_happiness_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_altruistic_total_happiness_voting_for_two))
@@ -382,7 +382,7 @@ def experiment_altruistic_agent():
 #    
 #    
 #    
-    plt.subplot(2,1,2)    
+#    plt.subplot(2,1,2)    
     mu_avg_diff_altruistic_tot_borda = np.average(average_difference_altruistic_total_happiness_borda)
     var_avg_diff_altruistic_tot_borda = np.var(average_difference_altruistic_total_happiness_borda)
     sigma_avg_diff_altruistic_tot_borda = math.sqrt(var_avg_diff_altruistic_tot_borda)
@@ -404,15 +404,15 @@ def experiment_altruistic_agent():
     x_avg_diff_altruistic_tot_antiplurality = np.linspace(mu_avg_diff_altruistic_tot_antiplurality - 3* sigma_avg_diff_altruistic_tot_antiplurality, mu_avg_diff_altruistic_tot_antiplurality + 3*sigma_avg_diff_altruistic_tot_antiplurality, number_of_experiments)
     
     
-    plt.plot(x_avg_diff_altruistic_tot_borda, stats.norm.pdf(x_avg_diff_altruistic_tot_borda, mu_avg_diff_altruistic_tot_borda, sigma_avg_diff_altruistic_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_altruistic_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_borda))
-    plt.plot(x_avg_diff_altruistic_tot_plurality, stats.norm.pdf(x_avg_diff_altruistic_tot_plurality, mu_avg_diff_altruistic_tot_plurality, sigma_avg_diff_altruistic_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_altruistic_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_plurality))
-    plt.plot(x_avg_diff_altruistic_tot_voting_for_two, stats.norm.pdf(x_avg_diff_altruistic_tot_voting_for_two, mu_avg_diff_altruistic_tot_voting_for_two, sigma_avg_diff_altruistic_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_altruistic_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_voting_for_two))
-    plt.plot(x_avg_diff_altruistic_tot_antiplurality, stats.norm.pdf(x_avg_diff_altruistic_tot_antiplurality, mu_avg_diff_altruistic_tot_antiplurality, sigma_avg_diff_altruistic_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_altruistic_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_antiplurality))
-    
-    plt.legend(fontsize='small')
-    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is an altruistic agent")
-    plt.xlabel("Change in the difference from the average honest happiness")
-    plt.ylabel("Probability of the change from the average honest happiness")
+#    plt.plot(x_avg_diff_altruistic_tot_borda, stats.norm.pdf(x_avg_diff_altruistic_tot_borda, mu_avg_diff_altruistic_tot_borda, sigma_avg_diff_altruistic_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_altruistic_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_borda))
+#    plt.plot(x_avg_diff_altruistic_tot_plurality, stats.norm.pdf(x_avg_diff_altruistic_tot_plurality, mu_avg_diff_altruistic_tot_plurality, sigma_avg_diff_altruistic_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_altruistic_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_plurality))
+#    plt.plot(x_avg_diff_altruistic_tot_voting_for_two, stats.norm.pdf(x_avg_diff_altruistic_tot_voting_for_two, mu_avg_diff_altruistic_tot_voting_for_two, sigma_avg_diff_altruistic_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_altruistic_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_voting_for_two))
+#    plt.plot(x_avg_diff_altruistic_tot_antiplurality, stats.norm.pdf(x_avg_diff_altruistic_tot_antiplurality, mu_avg_diff_altruistic_tot_antiplurality, sigma_avg_diff_altruistic_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_altruistic_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_altruistic_tot_antiplurality))
+#    
+#    plt.legend(fontsize='small')
+#    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is an altruistic agent")
+#    plt.xlabel("Change in the difference from the average honest happiness")
+#    plt.ylabel("Probability of the change from the average honest happiness")
     plt.savefig("altruistic_exp2_"+str(number_of_experiments)+".jpg")
     plt.show()
     
@@ -531,8 +531,8 @@ def experiment_majority_agent():
     x_diff_majority_total_happiness_antiplurality = np.linspace(mu_diff_majority_total_happiness_antiplurality - 3* sigma_diff_majority_total_happiness_antiplurality, mu_diff_majority_total_happiness_antiplurality + 3*sigma_diff_majority_total_happiness_antiplurality, number_of_experiments)
 
 
-    plt.figure(figsize=(8,20))
-    plt.subplot(2, 1, 1)
+    plt.figure(figsize=(10,10))
+#    plt.subplot(2, 1, 1)
     plt.plot(x_diff_majority_total_happiness_borda, stats.norm.pdf(x_diff_majority_total_happiness_borda, mu_diff_majority_total_happiness_borda, sigma_diff_majority_total_happiness_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_majority_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_majority_total_happiness_borda))
     plt.plot(x_diff_majority_total_happiness_plurality, stats.norm.pdf(x_diff_majority_total_happiness_plurality, mu_diff_majority_total_happiness_plurality, sigma_diff_majority_total_happiness_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_majority_total_happiness_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_majority_total_happiness_plurality))
     plt.plot(x_diff_majority_total_happiness_voting_for_two, stats.norm.pdf(x_diff_majority_total_happiness_voting_for_two, mu_diff_majority_total_happiness_voting_for_two, sigma_diff_majority_total_happiness_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_majority_total_happiness_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_majority_total_happiness_voting_for_two))
@@ -546,7 +546,7 @@ def experiment_majority_agent():
 #    
 #    
 #    
-    plt.subplot(2,1,2)    
+#    plt.subplot(2,1,2)    
     mu_avg_diff_majority_tot_borda = np.average(average_difference_majority_total_happiness_borda)
     var_avg_diff_majority_tot_borda = np.var(average_difference_majority_total_happiness_borda)
     sigma_avg_diff_majority_tot_borda = math.sqrt(var_avg_diff_majority_tot_borda)
@@ -568,15 +568,15 @@ def experiment_majority_agent():
     x_avg_diff_majority_tot_antiplurality = np.linspace(mu_avg_diff_majority_tot_antiplurality - 3* sigma_avg_diff_majority_tot_antiplurality, mu_avg_diff_majority_tot_antiplurality + 3*sigma_avg_diff_majority_tot_antiplurality, number_of_experiments)
     
     
-    plt.plot(x_avg_diff_majority_tot_borda, stats.norm.pdf(x_avg_diff_majority_tot_borda, mu_avg_diff_majority_tot_borda, sigma_avg_diff_majority_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_majority_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_borda))
-    plt.plot(x_avg_diff_majority_tot_plurality, stats.norm.pdf(x_avg_diff_majority_tot_plurality, mu_avg_diff_majority_tot_plurality, sigma_avg_diff_majority_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_majority_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_plurality))
-    plt.plot(x_avg_diff_majority_tot_voting_for_two, stats.norm.pdf(x_avg_diff_majority_tot_voting_for_two, mu_avg_diff_majority_tot_voting_for_two, sigma_avg_diff_majority_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_majority_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_voting_for_two))
-    plt.plot(x_avg_diff_majority_tot_antiplurality, stats.norm.pdf(x_avg_diff_majority_tot_antiplurality, mu_avg_diff_majority_tot_antiplurality, sigma_avg_diff_majority_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_majority_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_antiplurality))
-    
-    plt.legend(fontsize='small')
-    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is part of the majority")
-    plt.xlabel("Change in the difference from the average honest happiness")
-    plt.ylabel("Probability of the change from the average honest happiness")
+#    plt.plot(x_avg_diff_majority_tot_borda, stats.norm.pdf(x_avg_diff_majority_tot_borda, mu_avg_diff_majority_tot_borda, sigma_avg_diff_majority_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_majority_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_borda))
+#    plt.plot(x_avg_diff_majority_tot_plurality, stats.norm.pdf(x_avg_diff_majority_tot_plurality, mu_avg_diff_majority_tot_plurality, sigma_avg_diff_majority_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_majority_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_plurality))
+#    plt.plot(x_avg_diff_majority_tot_voting_for_two, stats.norm.pdf(x_avg_diff_majority_tot_voting_for_two, mu_avg_diff_majority_tot_voting_for_two, sigma_avg_diff_majority_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_majority_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_voting_for_two))
+#    plt.plot(x_avg_diff_majority_tot_antiplurality, stats.norm.pdf(x_avg_diff_majority_tot_antiplurality, mu_avg_diff_majority_tot_antiplurality, sigma_avg_diff_majority_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_majority_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_majority_tot_antiplurality))
+#    
+#    plt.legend(fontsize='small')
+#    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is part of the majority")
+#    plt.xlabel("Change in the difference from the average honest happiness")
+#    plt.ylabel("Probability of the change from the average honest happiness")
     plt.savefig("majority_exp2_"+str(number_of_experiments)+".jpg")
     plt.show()
 
@@ -747,8 +747,8 @@ def experiment_minority_agent():
     x_diff_minority_total_happiness_antiplurality = np.linspace(mu_diff_minority_total_happiness_antiplurality - 3* sigma_diff_minority_total_happiness_antiplurality, mu_diff_minority_total_happiness_antiplurality + 3*sigma_diff_minority_total_happiness_antiplurality, number_of_experiments)
 
 
-    plt.figure(figsize=(8,20))
-    plt.subplot(2, 1, 1)
+    plt.figure(figsize=(10,10))
+#    plt.subplot(2, 1, 1)
     plt.plot(x_diff_minority_total_happiness_borda, stats.norm.pdf(x_diff_minority_total_happiness_borda, mu_diff_minority_total_happiness_borda, sigma_diff_minority_total_happiness_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_minority_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_minority_total_happiness_borda))
     plt.plot(x_diff_minority_total_happiness_plurality, stats.norm.pdf(x_diff_minority_total_happiness_plurality, mu_diff_minority_total_happiness_plurality, sigma_diff_minority_total_happiness_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_minority_total_happiness_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_minority_total_happiness_plurality))
     plt.plot(x_diff_minority_total_happiness_voting_for_two, stats.norm.pdf(x_diff_minority_total_happiness_voting_for_two, mu_diff_minority_total_happiness_voting_for_two, sigma_diff_minority_total_happiness_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_minority_total_happiness_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_diff_minority_total_happiness_voting_for_two))
@@ -762,7 +762,7 @@ def experiment_minority_agent():
 #    
 #    
 #    
-    plt.subplot(2,1,2)    
+#    plt.subplot(2,1,2)    
     mu_avg_diff_minority_tot_borda = np.average(average_difference_minority_total_happiness_borda)
     var_avg_diff_minority_tot_borda = np.var(average_difference_minority_total_happiness_borda)
     sigma_avg_diff_minority_tot_borda = math.sqrt(var_avg_diff_minority_tot_borda)
@@ -784,15 +784,15 @@ def experiment_minority_agent():
     x_avg_diff_minority_tot_antiplurality = np.linspace(mu_avg_diff_minority_tot_antiplurality - 3* sigma_avg_diff_minority_tot_antiplurality, mu_avg_diff_minority_tot_antiplurality + 3*sigma_avg_diff_minority_tot_antiplurality, number_of_experiments)
     
     
-    plt.plot(x_avg_diff_minority_tot_borda, stats.norm.pdf(x_avg_diff_minority_tot_borda, mu_avg_diff_minority_tot_borda, sigma_avg_diff_minority_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_minority_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_borda))
-    plt.plot(x_avg_diff_minority_tot_plurality, stats.norm.pdf(x_avg_diff_minority_tot_plurality, mu_avg_diff_minority_tot_plurality, sigma_avg_diff_minority_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_minority_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_plurality))
-    plt.plot(x_avg_diff_minority_tot_voting_for_two, stats.norm.pdf(x_avg_diff_minority_tot_voting_for_two, mu_avg_diff_minority_tot_voting_for_two, sigma_avg_diff_minority_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_minority_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_voting_for_two))
-    plt.plot(x_avg_diff_minority_tot_antiplurality, stats.norm.pdf(x_avg_diff_minority_tot_antiplurality, mu_avg_diff_minority_tot_antiplurality, sigma_avg_diff_minority_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_minority_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_antiplurality))
+#    plt.plot(x_avg_diff_minority_tot_borda, stats.norm.pdf(x_avg_diff_minority_tot_borda, mu_avg_diff_minority_tot_borda, sigma_avg_diff_minority_tot_borda),label="borda, "+r'$\mu={avg:.1f},$'.format(avg=mu_diff_minority_total_happiness_borda) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_borda))
+#    plt.plot(x_avg_diff_minority_tot_plurality, stats.norm.pdf(x_avg_diff_minority_tot_plurality, mu_avg_diff_minority_tot_plurality, sigma_avg_diff_minority_tot_plurality),label="plurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_minority_tot_plurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_plurality))
+#    plt.plot(x_avg_diff_minority_tot_voting_for_two, stats.norm.pdf(x_avg_diff_minority_tot_voting_for_two, mu_avg_diff_minority_tot_voting_for_two, sigma_avg_diff_minority_tot_voting_for_two), label = "vote2, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_minority_tot_voting_for_two) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_voting_for_two))
+#    plt.plot(x_avg_diff_minority_tot_antiplurality, stats.norm.pdf(x_avg_diff_minority_tot_antiplurality, mu_avg_diff_minority_tot_antiplurality, sigma_avg_diff_minority_tot_antiplurality), label = "antiplurality, "+r'$\mu={avg:.1f},$'.format(avg=mu_avg_diff_minority_tot_antiplurality) + r'$\sigma={sig:.1f}$'.format(sig=sigma_avg_diff_minority_tot_antiplurality))
     
-    plt.legend(fontsize='small')
-    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is part of the minority")
-    plt.xlabel("Change in the difference from the average honest happiness")
-    plt.ylabel("Probability of the change from the average honest happiness")
+#    plt.legend(fontsize='small')
+#    plt.title("Distribution of the difference of overall happiness from the average honest\nhappiness after strategic voting when a strategic voter is part of the minority")
+#    plt.xlabel("Change in the difference from the average honest happiness")
+#    plt.ylabel("Probability of the change from the average honest happiness")
     plt.savefig("minority_exp2_"+str(number_of_experiments)+".jpg")
     plt.show()
     
@@ -808,10 +808,10 @@ def experiment_minority_agent():
 #### FUNCTIONS CALLS #####
 ##########################
     
-#experiment_selfish_agent()
+experiment_selfish_agent()
 #experiment_altruistic_agent()
 #experiment_majority_agent()
-experiment_minority_agent()
+#experiment_minority_agent()
 
 
 
