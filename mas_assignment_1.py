@@ -277,9 +277,14 @@ if args.scheme:
             print(prnt)
     quit()
 
+else:
+    print("Please select a scheme to continue.")
+    quit()
 
 
-
+#****************************************************************************************
+#**********************TESTS AND EXPERIMENTS not executable in main pipeline**************
+#****************************************************************************************
 
 #HAPPINESS WITH HONEST VOTING for 
 outcome_borda = vs.borda_calculate_outcome(preference_matrix)
