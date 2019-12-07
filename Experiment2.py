@@ -808,9 +808,9 @@ def experiment_minority_agent():
 #### FUNCTIONS CALLS #####
 ##########################
     
-experiment_selfish_agent()
+#experiment_selfish_agent()
 #experiment_altruistic_agent()
-#experiment_majority_agent()
+experiment_majority_agent()
 #experiment_minority_agent()
 
 

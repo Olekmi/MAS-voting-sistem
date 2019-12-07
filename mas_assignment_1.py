@@ -103,6 +103,7 @@ def tactical_voter(voting_scheme, preference_matrix, voter):
     si = si_comp
 
     risk = risk_calculate(number_of_options, preference_matrix.shape[1])
+    print("individual happiness vector", happiness_vector)
 
     overall_happiness = np.sum(happiness_vector)
     strategic_options = si[:]
@@ -222,7 +223,7 @@ def extract_str_from_text(text):
 number_of_preferences = 6
 number_of_voters = 8
 
-voter = 0
+voter = 1
 voting_scheme = "borda"
 
 #arguments
@@ -277,9 +278,9 @@ if args.scheme:
             print(prnt)
     quit()
 
-else:
-    print("Please select a scheme to continue.")
-    quit()
+# else:
+#     print("Please select a scheme to continue.")
+#     quit()
 
 
 #****************************************************************************************
@@ -372,5 +373,5 @@ print("risk compromising =",risk_compromising)
 
 tactical_voter(voting_scheme, preference_matrix, voter)
 #for i in range(100):
-voter = choose_strategic_voter(preference_matrix,voting_scheme,"altruistic")
+#voter = choose_strategic_voter(preference_matrix,voting_scheme,"altruistic")
 print("altruistic voter",voter)
